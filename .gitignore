@@ -1,0 +1,8 @@
+# Binares
+*.exe
+*.dll
+*.out
+/project2
+
+# Env
+.env!
