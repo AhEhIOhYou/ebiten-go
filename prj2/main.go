@@ -38,11 +38,14 @@ type Game struct {
 	count int
 }
 
+// Update updates a game by one tick. The given argument represents a screen image.
 func (g *Game) Update() error {
 	g.count++
 	return nil
 }
 
+// Draw draws the game screen.
+// Draw is called every frame (typically 1/60[s] for 60Hz display).
 func (g *Game) Draw(screen *ebiten.Image) {
 
 	op := &ebiten.DrawImageOptions{}
