@@ -10,20 +10,29 @@ import (
 	"log"
 )
 
-const (
-	screenWidth  = 640
-	screenHeight = 440
-)
-
 var (
-	runnerImage *ebiten.Image
-	testSprite  *sprite.Sprite
+	testSprite    *sprite.Sprite
+	screenWidth   = 1280
+	screenHeight  = 960
+	isInitialized = false
 )
 
 type Game struct{}
 
 // Update updates a game by one tick. The given argument represents a screen image.
 func (g *Game) Update() error {
+	if !isInitialized {
+		img, _, err := image.Decode(bytes.NewReader(images.ESHOT10_1))
+		if err != nil {
+			log.Fatal(err)
+		}
+		testSprite = sprite.New(&img, 1)
+		testSprite.SetIndex(0)
+		isInitialized = true
+		return nil
+	}
+
+	testSprite.SetPosition(float64(screenWidth/2), float64(screenHeight/2))
 	return nil
 }
 
@@ -34,22 +43,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
+	screenHeight = int(float64(screenWidth) / float64(outsideWidth) * float64(outsideHeight))
 	return screenWidth, screenHeight
 }
+
 func NewGame() (*Game, error) {
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("project2")
-
-	img, _, err := image.Decode(bytes.NewReader(images.EXPLODE_SMALL))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	runnerImage = ebiten.NewImageFromImage(img)
-
-	testSprite = sprite.New(runnerImage, 1)
-	testSprite.SetPosition(screenWidth/2, screenWidth/2)
 
 	game := &Game{}
 

@@ -1,12 +1,16 @@
 package sprite
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"image"
+	// import for side effect
+	_ "image/png"
+
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type frame struct {
-	width  int
-	height int
-	index  int
-	length int
+	w int
+	h int
 }
 
 type position struct {
@@ -19,39 +23,76 @@ type size struct {
 	h int
 }
 
+// Sprite manage part of image for certain size
 type Sprite struct {
-	image    *ebiten.Image
-	size     size
-	frame    frame
-	position position
+	image     *ebiten.Image
+	subImages []*ebiten.Image
+	size      size
+	frame     frame
+	position  position
+	index     int
+	length    int
 }
 
-func New(image *ebiten.Image, frameNum int) *Sprite {
+// New create the Sprite struct
+func New(img *image.Image, frameNum int) *Sprite {
+	originalImage := ebiten.NewImageFromImage(*img)
+
 	sprite := &Sprite{}
-	sprite.image = image
-	sprite.size.w, sprite.size.h = image.Size()
-	sprite.frame.length = frameNum
-	sprite.frame.index = 0
-	sprite.frame.width = sprite.size.w / frameNum
-	sprite.frame.height = sprite.size.h
+	sprite.image = originalImage
+	sprite.size.w, sprite.size.h = originalImage.Size()
+	sprite.length = frameNum
+	sprite.index = 0
+	sprite.frame.w = sprite.size.w / frameNum
+	sprite.frame.h = sprite.size.h
+
+	var subImages []*ebiten.Image
+	for i := 0; i < frameNum; i++ {
+		x := sprite.frame.w * i
+		y := 0
+		rect := image.Rect(x, y, x+sprite.frame.w, y+sprite.frame.h)
+		sub := originalImage.SubImage(rect)
+		ebitenImage := ebiten.NewImageFromImage(sub)
+		subImages = append(subImages, ebitenImage)
+	}
+	sprite.subImages = subImages
 
 	return sprite
 }
 
+// Size returns frame width and height of the Sprite
 func (s *Sprite) Size() (int, int) {
-	return s.frame.width, s.frame.height
+	return s.frame.w, s.frame.h
 }
 
+// SetPosition sets the position of the Sprite
 func (s *Sprite) SetPosition(x, y float64) {
 	s.position.x = x
 	s.position.y = y
 }
 
+// SetIndex sets the current frame of the Sprite
+func (s *Sprite) SetIndex(index int) {
+	s.index = index
+}
+
+// Index returns the current index of the Sprite
+func (s *Sprite) Index() int {
+	return s.index
+}
+
+// Length returns the length of the Sprite
+func (s *Sprite) Length() int {
+	return s.index
+}
+
+// Draw draws this sprite
 func (s *Sprite) Draw(screen *ebiten.Image) {
 	w, h := s.Size()
 	x := s.position.x
 	y := s.position.y
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(x-float64(w)/2, y-float64(h)/2)
-	screen.DrawImage(s.image, op)
+
+	screen.DrawImage(s.subImages[s.index], op)
 }
