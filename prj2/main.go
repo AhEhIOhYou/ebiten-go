@@ -1,12 +1,14 @@
 package prj2
 
 import (
+	"github.com/AhEhIOhYou/project2/prj2/internal/input"
 	"github.com/AhEhIOhYou/project2/prj2/internal/player"
 	"github.com/hajimehoshi/ebiten/v2"
 	_ "image/png"
 )
 
 var (
+	myGameInput   *input.GameInput
 	myPlayer      *player.Player
 	screenWidth   = 640
 	screenHeight  = 440
@@ -19,9 +21,13 @@ type Game struct{}
 func (g *Game) Update() error {
 	if !isInitialized {
 		myPlayer = player.New()
+		myGameInput = &input.GameInput{}
 		isInitialized = true
 		return nil
 	}
+
+	myGameInput.Update()
+	myPlayer.Update(myGameInput)
 
 	return nil
 }
