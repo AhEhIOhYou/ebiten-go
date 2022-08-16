@@ -21,7 +21,7 @@ type Game struct{}
 func (g *Game) Update() error {
 	if !isInitialized {
 		myPlayer = player.New()
-		myGameInput = &input.GameInput{}
+		myGameInput = input.New()
 		isInitialized = true
 		return nil
 	}
