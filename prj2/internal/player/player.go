@@ -8,24 +8,12 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/resources/images"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
+	"math"
 )
 
 const (
 	initPlayerSpeed  = 5
 	focusPlayerSpeed = 1
-)
-
-var (
-	spriteIndexMap = map[int]int{
-		1: 5,
-		2: 4,
-		3: 3,
-		4: 6,
-		6: 2,
-		7: 7,
-		8: 0,
-		9: 1,
-	}
 )
 
 // Player represents player of the game
@@ -55,7 +43,9 @@ func New() *Player {
 // Draw draws this sprite
 func (p *Player) Draw(screen *ebiten.Image) {
 	p.sprite.SetPosition(p.actor.X, p.actor.Y)
-	p.sprite.SetIndex(spriteIndexMap[p.actor.Direction])
+	// Calc frame-sprite index by degree
+	spriteIndex := int(float64(((p.actor.Deg+90)+360)%360) / 45)
+	p.sprite.SetIndex(spriteIndex)
 	p.sprite.Draw(screen)
 }
 
@@ -68,77 +58,21 @@ func (p *Player) Update(input *input.GameInput) {
 		p.actor.SetSpeed(initPlayerSpeed)
 	}
 
-	isMoving := false
-
-	// Up
-	if input.Up != 0 && (input.Right+input.Left == 0 || input.Right+input.Left == 2) {
-		p.vx = 0
-		p.vy = -p.actor.Speed
-		p.actor.Y = p.actor.Y - p.actor.Speed
-		isMoving = true
-		p.actor.SetDirection(7)
+	if input.Vertical != 0 {
+		p.vy = input.Vertical * p.actor.Speed
+		p.actor.Y = p.actor.Y + p.vy
 	}
 
-	// Down
-	if input.Down != 0 && (input.Right+input.Left == 0 || input.Right+input.Left == 2) {
-		p.vx = 0
-		p.vy = p.actor.Speed
-		p.actor.Y = p.actor.Y + p.actor.Speed
-		isMoving = true
-		p.actor.SetDirection(3)
+	if input.Horizontal != 0 {
+		p.vx = input.Horizontal * p.actor.Speed
+		p.actor.X = p.actor.X + p.vx
 	}
 
-	// Left
-	if input.Left != 0 && (input.Up+input.Down == 0 || input.Up+input.Down == 2) {
-		p.vx = -p.actor.Speed
-		p.vy = 0
-		p.actor.X = p.actor.X - p.actor.Speed
-		isMoving = true
-		p.actor.SetDirection(5)
-	}
-
-	// Right
-	if input.Right != 0 && (input.Up+input.Down == 0 || input.Up+input.Down == 2) {
-		p.vx = p.actor.Speed
-		p.vy = 0
-		p.actor.X = p.actor.X + p.actor.Speed
-		isMoving = true
-		p.actor.SetDirection(1)
-	}
-
-	// Diagonal
-	if isMoving == false {
-		if input.Up != 0 && input.Right != 0 {
-			p.vx = p.actor.NSpd
-			p.vy = -p.actor.NSpd
-			p.actor.X = p.actor.X + p.actor.NSpd
-			p.actor.Y = p.actor.Y - p.actor.NSpd
-			isMoving = true
-			p.actor.SetDirection(8)
-		}
-		if input.Up != 0 && input.Left != 0 {
-			p.vx = -p.actor.NSpd
-			p.vy = -p.actor.NSpd
-			p.actor.X = p.actor.X - p.actor.NSpd
-			p.actor.Y = p.actor.Y - p.actor.NSpd
-			isMoving = true
-			p.actor.SetDirection(6)
-		}
-		if input.Down != 0 && input.Right != 0 {
-			p.vx = p.actor.NSpd
-			p.vy = p.actor.NSpd
-			p.actor.X = p.actor.X + p.actor.NSpd
-			p.actor.Y = p.actor.Y + p.actor.NSpd
-			isMoving = true
-			p.actor.SetDirection(2)
-		}
-		if input.Down != 0 && input.Left != 0 {
-			p.vx = -p.actor.NSpd
-			p.vy = p.actor.NSpd
-			p.actor.X = p.actor.X - p.actor.NSpd
-			p.actor.Y = p.actor.Y + p.actor.NSpd
-			isMoving = true
-			p.actor.SetDirection(4)
+	if input.Vertical != 0 || input.Horizontal != 0 {
+		degree := int(math.Atan2(input.Vertical, input.Horizontal) * 180 / math.Pi)
+		if input.Fire == false {
+			p.actor.SetDeg(degree)
 		}
 	}
+
 }
