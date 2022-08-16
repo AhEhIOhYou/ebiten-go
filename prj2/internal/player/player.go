@@ -15,6 +15,19 @@ const (
 	focusPlayerSpeed = 1
 )
 
+var (
+	spriteIndexMap = map[int]int{
+		1: 5,
+		2: 4,
+		3: 3,
+		4: 6,
+		6: 2,
+		7: 7,
+		8: 0,
+		9: 1,
+	}
+)
+
 // Player represents player of the game
 type Player struct {
 	sprite *sprite.Sprite
@@ -42,6 +55,7 @@ func New() *Player {
 // Draw draws this sprite
 func (p *Player) Draw(screen *ebiten.Image) {
 	p.sprite.SetPosition(p.actor.X, p.actor.Y)
+	p.sprite.SetIndex(spriteIndexMap[p.actor.Direction])
 	p.sprite.Draw(screen)
 }
 
@@ -62,6 +76,7 @@ func (p *Player) Update(input *input.GameInput) {
 		p.vy = -p.actor.Speed
 		p.actor.Y = p.actor.Y - p.actor.Speed
 		isMoving = true
+		p.actor.SetDirection(7)
 	}
 
 	// Down
@@ -70,6 +85,7 @@ func (p *Player) Update(input *input.GameInput) {
 		p.vy = p.actor.Speed
 		p.actor.Y = p.actor.Y + p.actor.Speed
 		isMoving = true
+		p.actor.SetDirection(3)
 	}
 
 	// Left
@@ -78,6 +94,7 @@ func (p *Player) Update(input *input.GameInput) {
 		p.vy = 0
 		p.actor.X = p.actor.X - p.actor.Speed
 		isMoving = true
+		p.actor.SetDirection(5)
 	}
 
 	// Right
@@ -86,6 +103,7 @@ func (p *Player) Update(input *input.GameInput) {
 		p.vy = 0
 		p.actor.X = p.actor.X + p.actor.Speed
 		isMoving = true
+		p.actor.SetDirection(1)
 	}
 
 	// Diagonal
@@ -96,6 +114,7 @@ func (p *Player) Update(input *input.GameInput) {
 			p.actor.X = p.actor.X + p.actor.NSpd
 			p.actor.Y = p.actor.Y - p.actor.NSpd
 			isMoving = true
+			p.actor.SetDirection(8)
 		}
 		if input.Up != 0 && input.Left != 0 {
 			p.vx = -p.actor.NSpd
@@ -103,6 +122,7 @@ func (p *Player) Update(input *input.GameInput) {
 			p.actor.X = p.actor.X - p.actor.NSpd
 			p.actor.Y = p.actor.Y - p.actor.NSpd
 			isMoving = true
+			p.actor.SetDirection(6)
 		}
 		if input.Down != 0 && input.Right != 0 {
 			p.vx = p.actor.NSpd
@@ -110,6 +130,7 @@ func (p *Player) Update(input *input.GameInput) {
 			p.actor.X = p.actor.X + p.actor.NSpd
 			p.actor.Y = p.actor.Y + p.actor.NSpd
 			isMoving = true
+			p.actor.SetDirection(2)
 		}
 		if input.Down != 0 && input.Left != 0 {
 			p.vx = -p.actor.NSpd
@@ -117,10 +138,7 @@ func (p *Player) Update(input *input.GameInput) {
 			p.actor.X = p.actor.X - p.actor.NSpd
 			p.actor.Y = p.actor.Y + p.actor.NSpd
 			isMoving = true
+			p.actor.SetDirection(4)
 		}
-	}
-
-	if input.Fire == false {
-		p.actor.SetDirection(2)
 	}
 }

@@ -4,14 +4,15 @@ import "math"
 
 var (
 	directionDegreeMap = map[int]int{
-		1: 135,
-		2: 90,
-		3: 45,
-		4: 180,
-		6: 0,
-		7: 225,
-		8: 270,
-		9: 315}
+		1: 0,
+		2: 45,
+		3: 90,
+		4: 135,
+		5: 180,
+		6: 225,
+		7: 270,
+		8: 315,
+	}
 )
 
 // Actor represents actor
