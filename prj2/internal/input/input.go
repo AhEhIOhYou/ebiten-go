@@ -27,17 +27,17 @@ func (i *GameInput) Update() {
 	}
 	i.prevTickTime = time.Now()
 
-	if ebiten.IsKeyPressed(ebiten.KeyS) || ebiten.IsKeyPressed(ebiten.KeyDown) {
+	if ebiten.IsKeyPressed(ebiten.KeyDown) {
 		i.Vertical = 1
-	} else if ebiten.IsKeyPressed(ebiten.KeyW) || ebiten.IsKeyPressed(ebiten.KeyUp) {
+	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		i.Vertical = -1
 	} else {
 		i.Vertical = 0
 	}
 
-	if ebiten.IsKeyPressed(ebiten.KeyD) || ebiten.IsKeyPressed(ebiten.KeyRight) {
+	if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		i.Horizontal = 1
-	} else if ebiten.IsKeyPressed(ebiten.KeyA) || ebiten.IsKeyPressed(ebiten.KeyLeft) {
+	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		i.Horizontal = -1
 	} else {
 		i.Horizontal = 0
