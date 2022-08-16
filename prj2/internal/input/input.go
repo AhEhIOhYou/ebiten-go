@@ -9,6 +9,7 @@ type GameInput struct {
 	Down  float64
 	Right float64
 	Fire  bool
+	Focus bool
 }
 
 // Update updates the input state
@@ -36,6 +37,8 @@ func (i *GameInput) Update() {
 	} else {
 		i.Right = 0
 	}
+
+	i.Focus = ebiten.IsKeyPressed(ebiten.KeyShiftLeft)
 
 	i.Fire = ebiten.IsKeyPressed(ebiten.KeyZ)
 }

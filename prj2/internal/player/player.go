@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	initPlayerSpeed = 4
+	initPlayerSpeed  = 5
+	focusPlayerSpeed = 1
 )
 
 // Player represents player of the game
@@ -46,6 +47,13 @@ func (p *Player) Draw(screen *ebiten.Image) {
 
 // Update updates the player's state
 func (p *Player) Update(input *input.GameInput) {
+
+	if input.Focus != false {
+		p.actor.SetSpeed(focusPlayerSpeed)
+	} else {
+		p.actor.SetSpeed(initPlayerSpeed)
+	}
+
 	isMoving := false
 
 	// Up
