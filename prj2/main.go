@@ -1,38 +1,37 @@
 package prj2
 
 import (
-	"github.com/AhEhIOhYou/project2/prj2/internal/input"
-	"github.com/AhEhIOhYou/project2/prj2/internal/player"
-	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/AhEhIOhYou/project2/prj2/internal/scene"
+	"github.com/AhEhIOhYou/project2/prj2/internal/scene/shooting"
 	"image/color"
-	_ "image/png"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 var (
-	myInput       *input.GameInput
-	myPlayer      *player.Player
-	myPanel       *input.Panel
-	screenWidth   = 640
-	screenHeight  = 440
-	panelWidth    = 100
-	isInitialized = false
+	currentScene  scene.Scene = nil
+	screenWidth               = 640
+	screenHeight              = 440
+	isLayouted                = false
+	isInitialized             = false
 )
 
+// Game implements ebiten.Game interface.
 type Game struct{}
 
 // Update updates a game by one tick. The given argument represents a screen image.
 func (g *Game) Update() error {
-	if !isInitialized {
-		myPlayer = player.New()
-		myInput = input.New()
-		//myPanel = input.NewPanel(screenWidth-panelWidth, 0, panelWidth, screenHeight)
+	if isLayouted && !isInitialized {
+		currentScene = shooting.New(shooting.NewOptions(shooting.NewOptions{
+			ScreenWidth:  screenWidth,
+			ScreenHeight: screenHeight,
+		}))
 		isInitialized = true
 		return nil
 	}
-
-	myInput.Update()
-	//myPanel.UpdatePanel()
-	myPlayer.Update(myInput)
+	if currentScene != nil {
+		currentScene.Update()
+	}
 
 	return nil
 }
@@ -40,19 +39,21 @@ func (g *Game) Update() error {
 // Draw draws the game screen.
 // Draw is called every frame (typically 1/60[s] for 60Hz display).
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.Fill(color.RGBA{R: 0x10, G: 0x10, B: 0x30, A: 0xff})
-	myPlayer.Draw(screen)
-	//myPanel.DrawPanel(screen)
+	screen.Fill(color.RGBA{0x10, 0x10, 0x30, 0xff})
+	currentScene.Draw(screen)
 }
 
+// Layout takes the outside size (e.g., the window size) and returns the (logical) screen size.
+// If you don't have to adjust the screen size with the outside size, just return a fixed size.
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	screenHeight = int(float64(screenWidth) / float64(outsideWidth) * float64(outsideHeight))
+	isLayouted = true
 	return screenWidth, screenHeight
 }
 
+// NewGame creates a game struct
 func NewGame() (*Game, error) {
-
-	ebiten.SetWindowSize(screenWidth, screenHeight)
+	ebiten.SetWindowSize(screenWidth*2, screenHeight*2)
 	ebiten.SetWindowTitle("project2")
 
 	game := &Game{}

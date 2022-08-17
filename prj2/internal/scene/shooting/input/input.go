@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// GameInput represents the state of user's input
-type GameInput struct {
+// Input represents the state of user's input
+type Input struct {
 	Horizontal   float64
 	Vertical     float64
 	Fire         bool
@@ -14,14 +14,14 @@ type GameInput struct {
 	prevTickTime time.Time
 }
 
-func New() *GameInput {
-	gameInput := &GameInput{}
+func New() *Input {
+	gameInput := &Input{}
 	gameInput.prevTickTime = time.Now()
 	return gameInput
 }
 
 // Update updates the input state
-func (i *GameInput) Update() {
+func (i *Input) Update() {
 	if time.Since(i.prevTickTime).Milliseconds() < 50 {
 		return
 	}

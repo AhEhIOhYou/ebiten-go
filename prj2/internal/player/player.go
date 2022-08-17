@@ -3,9 +3,8 @@ package player
 import (
 	"bytes"
 	"github.com/AhEhIOhYou/project2/prj2/internal/actor"
-	"github.com/AhEhIOhYou/project2/prj2/internal/input"
+	"github.com/AhEhIOhYou/project2/prj2/internal/resources/images"
 	"github.com/AhEhIOhYou/project2/prj2/internal/sprite"
-	"github.com/AhEhIOhYou/project2/prj2/resources/images"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 	"math"
@@ -49,28 +48,28 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	p.sprite.Draw(screen)
 }
 
-// Update updates the player's state
-func (p *Player) Update(input *input.GameInput) {
+func (p *Player) Move(horizontal float64, vertical float64, isFire, isFocus bool) {
 
-	if input.Focus != false {
+	if isFocus != false {
 		p.actor.SetSpeed(focusPlayerSpeed)
 	} else {
 		p.actor.SetSpeed(initPlayerSpeed)
 	}
 
-	if input.Vertical != 0 {
-		p.vy = input.Vertical * p.actor.Speed
+	if vertical != 0 {
+		p.vy = vertical * p.actor.Speed
 		p.actor.Y = p.actor.Y + p.vy
 	}
 
-	if input.Horizontal != 0 {
-		p.vx = input.Horizontal * p.actor.Speed
+	if horizontal != 0 {
+		p.vx = horizontal * p.actor.Speed
 		p.actor.X = p.actor.X + p.vx
 	}
 
-	if input.Vertical != 0 || input.Horizontal != 0 {
-		degree := int(math.Atan2(input.Vertical, input.Horizontal) * 180 / math.Pi)
-		p.actor.SetDeg(degree)
+	if vertical != 0 || horizontal != 0 {
+		degree := int(math.Atan2(vertical, horizontal) * 180 / math.Pi)
+		if isFire == false {
+			p.actor.SetDeg(degree)
+		}
 	}
-
 }
