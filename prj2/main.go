@@ -9,11 +9,12 @@ import (
 )
 
 var (
-	myGameInput   *input.GameInput
+	myInput       *input.GameInput
 	myPlayer      *player.Player
-	myInputPanel  *input.Panel
+	myPanel       *input.Panel
 	screenWidth   = 640
 	screenHeight  = 440
+	panelWidth    = 100
 	isInitialized = false
 )
 
@@ -23,15 +24,15 @@ type Game struct{}
 func (g *Game) Update() error {
 	if !isInitialized {
 		myPlayer = player.New()
-		myGameInput = input.New()
-		myInputPanel = input.NewPanel(screenWidth, screenHeight)
+		myInput = input.New()
+		//myPanel = input.NewPanel(screenWidth-panelWidth, 0, panelWidth, screenHeight)
 		isInitialized = true
 		return nil
 	}
 
-	myGameInput.Update()
-	myInputPanel.UpdatePanel()
-	myPlayer.Update(myGameInput)
+	myInput.Update()
+	//myPanel.UpdatePanel()
+	myPlayer.Update(myInput)
 
 	return nil
 }
@@ -41,7 +42,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{R: 0x10, G: 0x10, B: 0x30, A: 0xff})
 	myPlayer.Draw(screen)
-	myInputPanel.DrawPanel(screen)
+	//myPanel.DrawPanel(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {

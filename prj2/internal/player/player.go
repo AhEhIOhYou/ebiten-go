@@ -70,9 +70,7 @@ func (p *Player) Update(input *input.GameInput) {
 
 	if input.Vertical != 0 || input.Horizontal != 0 {
 		degree := int(math.Atan2(input.Vertical, input.Horizontal) * 180 / math.Pi)
-		if input.Fire == false {
-			p.actor.SetDeg(degree)
-		}
+		p.actor.SetDeg(degree)
 	}
 
 }
