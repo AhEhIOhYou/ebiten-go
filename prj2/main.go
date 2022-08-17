@@ -53,10 +53,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 // NewGame creates a game struct
 func NewGame() (*Game, error) {
-	ebiten.SetWindowSize(screenWidth*2, screenHeight*2)
-	ebiten.SetWindowTitle("project2")
-
 	game := &Game{}
-
 	return game, nil
 }
