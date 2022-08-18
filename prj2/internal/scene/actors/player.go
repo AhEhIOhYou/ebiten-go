@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	initPlayerSpeed  = 5
-	focusPlayerSpeed = 2
-	initPositionX    = 120
-	initPositionY    = 160
+	initPlayerSpeed  = 8
+	focusPlayerSpeed = 3
+	initPositionX    = 320
+	initPositionY    = 320
 	playerWidth      = 10
 	playerHeight     = 10
 )

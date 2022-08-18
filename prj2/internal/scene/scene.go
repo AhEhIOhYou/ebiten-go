@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	maxPlayerShot = 80
+	maxPlayerShot = 200
 )
 
 // PlayerShooter представляет интерфейс оружия игрока

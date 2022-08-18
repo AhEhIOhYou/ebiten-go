@@ -2,8 +2,6 @@ package actors
 
 import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/sprite"
-	"math"
-
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -37,8 +35,9 @@ func (p *PlayerBullet) Init(degree int, speed float64, x, y, size int) {
 	p.speed = speed
 	p.deg = degree
 
-	p.vx = math.Cos(degToRad(degree)) * speed
-	p.vy = math.Sin(degToRad(degree)) * speed
+	p.vx = 0
+	p.vy = -speed
+
 	p.spriteIndex = degreeToDirectionIndex(degree)
 
 	p.width = size
