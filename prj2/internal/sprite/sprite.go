@@ -1,11 +1,18 @@
 package sprite
 
 import (
+	"bytes"
+	"github.com/AhEhIOhYou/project2/prj2/internal/resources/images"
 	"image"
-	// import for side effect
 	_ "image/png"
 
 	"github.com/hajimehoshi/ebiten/v2"
+)
+
+var (
+	Background   *Sprite
+	Player       *Sprite
+	PlayerBullet *Sprite
 )
 
 type frame struct {
@@ -23,7 +30,7 @@ type size struct {
 	h int
 }
 
-// Sprite manage part of image for certain size
+// Sprite представляет спрайт
 type Sprite struct {
 	image     *ebiten.Image
 	subImages []*ebiten.Image
@@ -34,8 +41,8 @@ type Sprite struct {
 	length    int
 }
 
-// New create the Sprite struct
-func New(img *image.Image, frameNum int) *Sprite {
+// NewSprite создает новый спрайт из изображения и количества кадров
+func NewSprite(img *image.Image, frameNum int) *Sprite {
 	originalImage := ebiten.NewImageFromImage(*img)
 
 	sprite := &Sprite{}
@@ -46,7 +53,7 @@ func New(img *image.Image, frameNum int) *Sprite {
 	sprite.frame.w = sprite.size.w / frameNum
 	sprite.frame.h = sprite.size.h
 
-	var subImages []*ebiten.Image
+	subImages := []*ebiten.Image{}
 	for i := 0; i < frameNum; i++ {
 		x := sprite.frame.w * i
 		y := 0
@@ -60,33 +67,33 @@ func New(img *image.Image, frameNum int) *Sprite {
 	return sprite
 }
 
-// Size returns frame width and height of the Sprite
+// Size возвращает ширину и высоту кадров спрайта
 func (s *Sprite) Size() (int, int) {
 	return s.frame.w, s.frame.h
 }
 
-// SetPosition sets the position of the Sprite
+// SetPosition устанавливает позицию спрайта
 func (s *Sprite) SetPosition(x, y float64) {
 	s.position.x = x
 	s.position.y = y
 }
 
-// SetIndex sets the current frame of the Sprite
+// SetIndex устанавливает текущий фрейм спрайта
 func (s *Sprite) SetIndex(index int) {
 	s.index = index
 }
 
-// Index returns the current index of the Sprite
+// Index возвращает индекс текущего фрейма
 func (s *Sprite) Index() int {
 	return s.index
 }
 
-// Length returns the length of the Sprite
+// Length возвращает количество фреймов у спрайта
 func (s *Sprite) Length() int {
-	return s.index
+	return s.length
 }
 
-// Draw draws this sprite
+// Draw отрисовывает спрайт
 func (s *Sprite) Draw(screen *ebiten.Image) {
 	w, h := s.Size()
 	x := s.position.x
@@ -95,4 +102,17 @@ func (s *Sprite) Draw(screen *ebiten.Image) {
 	op.GeoM.Translate(x-float64(w)/2, y-float64(h)/2)
 
 	screen.DrawImage(s.subImages[s.index], op)
+}
+
+// LoadSprites загружает спрайты из изображений
+func LoadSprites() {
+	Player = createSprite(&images.P_ROBO1, 8)
+	Background = createSprite(&images.SPACE5, 1)
+	PlayerBullet = createSprite(&images.SHOT2, 8)
+}
+
+// создает изображения из байтового массива
+func createSprite(rawImage *[]byte, frameNum int) *Sprite {
+	img, _, _ := image.Decode(bytes.NewReader(*rawImage))
+	return NewSprite(&img, frameNum)
 }
