@@ -5,6 +5,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+// size представляет размер сцены
 type size struct {
 	width  int
 	height int
@@ -14,6 +15,7 @@ func main() {
 	window := &size{640, 640}
 	ebiten.SetWindowTitle("project2")
 	ebiten.SetWindowSize(window.width, window.height)
+
 	game, err := prj2.NewGame()
 	if err != nil {
 		panic(err)

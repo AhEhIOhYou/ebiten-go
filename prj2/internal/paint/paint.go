@@ -5,12 +5,12 @@ import (
 	"image/color"
 )
 
-// Rect represents an area of image
+// Rect представляет область с изображением
 type Rect struct {
 	X, Y, W, H int
 }
 
-// FillRect fills an area of the image
+// FillRect заполняет область изображения
 func FillRect(target *ebiten.Image, r Rect, clr color.Color) {
 	img := ebiten.NewImage(r.W, r.H)
 	img.Fill(clr)
@@ -21,7 +21,7 @@ func FillRect(target *ebiten.Image, r Rect, clr color.Color) {
 	target.DrawImage(img, op)
 }
 
-// DrawRect draws rect
+// DrawRect отрисовывает область
 func DrawRect(target *ebiten.Image, r Rect, clr color.Color, width int) {
 	for i := r.X; i < r.X+r.W; i++ {
 		for j := 0; j < width; j++ {
