@@ -1,11 +1,11 @@
-package input
+package inputs
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"time"
 )
 
-// Input represents the state of user's input
+// Input представляет управление игроком
 type Input struct {
 	Horizontal   float64
 	Vertical     float64
@@ -14,13 +14,14 @@ type Input struct {
 	prevTickTime time.Time
 }
 
+// New инициализирует стуктуру управления
 func New() *Input {
 	gameInput := &Input{}
 	gameInput.prevTickTime = time.Now()
 	return gameInput
 }
 
-// Update updates the input state
+// Update обновляет состояние управления
 func (i *Input) Update() {
 	if time.Since(i.prevTickTime).Milliseconds() < 50 {
 		return
