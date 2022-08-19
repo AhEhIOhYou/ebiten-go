@@ -13,6 +13,7 @@ import (
 
 const (
 	maxPlayerShot = 200
+	maxEnemyShot  = 200
 )
 
 // PlayerShooter представляет интерфейс оружия игрока
@@ -20,16 +21,25 @@ type PlayerShooter interface {
 	Shot(x, y float64, degree int, playerShots []*actors.PlayerBullet)
 }
 
+// EnemyShooter представляет интерфейс оружия противника
+type EnemyShooter interface {
+	Shot(x, y float64, degree int, EnemyShooter []*actors.EnemyBullet)
+}
+
 var (
 	input        *inputs.Input
 	field        *fields.Field
 	player       *actors.Player
 	playerWeapon PlayerShooter
+	enemyWeapon  EnemyShooter
 	playerShots  [maxPlayerShot]*actors.PlayerBullet
+	enemyShots   [maxEnemyShot]*actors.EnemyBullet
 )
 
 // Scene представляет сцену
-type Scene struct{}
+type Scene struct {
+	tick time.Time
+}
 
 // NewSceneOptions представляет настройки сцены
 type NewSceneOptions struct {
@@ -40,6 +50,7 @@ type NewSceneOptions struct {
 // NewScene вернет стандартную сцену
 func NewScene(options NewSceneOptions) *Scene {
 	stg := &Scene{}
+	stg.tick = time.Now()
 	initGame()
 	return stg
 }
@@ -54,11 +65,14 @@ func initGame() {
 
 	player = actors.NewPlayer()
 	playerWeapon = &tools.PlayerWeapon{}
-
 	for i := 0; i < len(playerShots); i++ {
 		playerShots[i] = actors.NewPlayerShot()
 	}
 
+	enemyWeapon = &tools.EnemyWeapon{}
+	for i := 0; i < len(enemyShots); i++ {
+		enemyShots[i] = actors.NewEnemyShot()
+	}
 }
 
 // Update обновляет состояние сцены (актеров и окружения)
@@ -67,13 +81,23 @@ func (stg *Scene) Update() {
 	checkCollision()
 	player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 
+	enemyWeapon.Shot(100, 100, 90, enemyShots[:])
 	if input.Fire {
+
 		x, y := player.GetPosition()
 		playerWeapon.Shot(x, y, player.GetNormalizedDegree(), playerShots[:])
 	}
 
 	for i := 0; i < len(playerShots); i++ {
 		p := playerShots[i]
+		if p.IsActive() == false {
+			continue
+		}
+		p.Move()
+	}
+
+	for i := 0; i < len(enemyShots); i++ {
+		p := enemyShots[i]
 		if p.IsActive() == false {
 			continue
 		}
@@ -89,6 +113,14 @@ func (stg *Scene) Draw(screen *ebiten.Image) {
 
 	for i := 0; i < len(playerShots); i++ {
 		p := playerShots[i]
+		if p.IsActive() == false {
+			continue
+		}
+		p.Draw(screen)
+	}
+
+	for i := 0; i < len(enemyShots); i++ {
+		p := enemyShots[i]
 		if p.IsActive() == false {
 			continue
 		}
