@@ -1,77 +1,57 @@
 package scene
 
 import (
+	"github.com/AhEhIOhYou/project2/prj2/internal/actors"
+	"github.com/AhEhIOhYou/project2/prj2/internal/bullet"
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/inputs"
-	"github.com/AhEhIOhYou/project2/prj2/internal/scene/actors"
-	"github.com/AhEhIOhYou/project2/prj2/internal/scene/tools"
+	"github.com/AhEhIOhYou/project2/prj2/internal/tools"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image/color"
-	"math/rand"
 	"time"
 )
 
 const (
 	maxPlayerShot = 200
-	maxEnemyShot  = 200
 )
-
-// PlayerShooter представляет интерфейс оружия игрока
-type PlayerShooter interface {
-	Shot(x, y float64, degree int, playerShots []*actors.PlayerBullet)
-}
-
-// EnemyShooter представляет интерфейс оружия противника
-type EnemyShooter interface {
-	Shot(x, y float64, degree int, EnemyShooter []*actors.EnemyBullet)
-}
 
 var (
 	input        *inputs.Input
-	field        *fields.Field
+	currentField *fields.Field
 	player       *actors.Player
-	playerWeapon PlayerShooter
-	enemyWeapon  EnemyShooter
-	playerShots  [maxPlayerShot]*actors.PlayerBullet
-	enemyShots   [maxEnemyShot]*actors.EnemyBullet
+	playerShots  [maxPlayerShot]*bullet.Bullet
 )
 
 // Scene представляет сцену
 type Scene struct {
-	tick time.Time
-}
-
-// NewSceneOptions представляет настройки сцены
-type NewSceneOptions struct {
-	ScreenWidth  int
-	ScreenHeight int
+	time         time.Time
+	screenWidth  int
+	screenHeight int
 }
 
 // NewScene вернет стандартную сцену
-func NewScene(options NewSceneOptions) *Scene {
+func NewScene(screenWidth, screenHeight int) *Scene {
 	stg := &Scene{}
-	stg.tick = time.Now()
-	initGame()
+	stg.screenWidth = screenWidth
+	stg.screenHeight = screenHeight
+	stg.time = time.Now()
+	stg.initGame()
 	return stg
 }
 
 // initGame инициализирует игру
-func initGame() {
-	rand.Seed(time.Now().Unix())
+func (stg *Scene) initGame() {
 	input = inputs.New()
-	field = fields.NewField()
-
-	actors.SetBoundary(field)
+	currentField = fields.NewField()
 
 	player = actors.NewPlayer()
-	playerWeapon = &tools.PlayerWeapon{}
-	for i := 0; i < len(playerShots); i++ {
-		playerShots[i] = actors.NewPlayerShot()
-	}
+	player.Init()
+	player.SetMainWeapon(tools.NewNormal(bullet.KindPlayerNormal))
+	player.SetField(currentField)
 
-	enemyWeapon = &tools.EnemyWeapon{}
-	for i := 0; i < len(enemyShots); i++ {
-		enemyShots[i] = actors.NewEnemyShot()
+	for i := 0; i < len(playerShots); i++ {
+		playerShots[i] = bullet.NewBullet()
+		playerShots[i].SetField(currentField)
 	}
 }
 
@@ -81,23 +61,13 @@ func (stg *Scene) Update() {
 	checkCollision()
 	player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 
-	enemyWeapon.Shot(100, 100, 90, enemyShots[:])
+	player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
-
-		x, y := player.GetPosition()
-		playerWeapon.Shot(x, y, player.GetNormalizedDegree(), playerShots[:])
+		player.FireWeapon(playerShots[:])
 	}
 
 	for i := 0; i < len(playerShots); i++ {
 		p := playerShots[i]
-		if p.IsActive() == false {
-			continue
-		}
-		p.Move()
-	}
-
-	for i := 0; i < len(enemyShots); i++ {
-		p := enemyShots[i]
 		if p.IsActive() == false {
 			continue
 		}
@@ -108,19 +78,11 @@ func (stg *Scene) Update() {
 // Draw отрисовывает всех действиующих лиц сцены
 func (stg *Scene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0x10, 0x10, 0x30, 0xff})
-	field.Draw(screen)
+	currentField.Draw(screen)
 	player.Draw(screen)
 
 	for i := 0; i < len(playerShots); i++ {
 		p := playerShots[i]
-		if p.IsActive() == false {
-			continue
-		}
-		p.Draw(screen)
-	}
-
-	for i := 0; i < len(enemyShots); i++ {
-		p := enemyShots[i]
 		if p.IsActive() == false {
 			continue
 		}
