@@ -1,9 +1,9 @@
 package scene
 
 import (
+	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
+	"github.com/AhEhIOhYou/project2/prj2/internal/inputs"
 	"github.com/AhEhIOhYou/project2/prj2/internal/scene/actors"
-	"github.com/AhEhIOhYou/project2/prj2/internal/scene/fields"
-	"github.com/AhEhIOhYou/project2/prj2/internal/scene/inputs"
 	"github.com/AhEhIOhYou/project2/prj2/internal/scene/tools"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image/color"
