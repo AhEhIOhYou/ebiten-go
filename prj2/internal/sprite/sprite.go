@@ -110,7 +110,7 @@ func LoadSprites() {
 	Player = createSprite(&images.P_ROBO1, 8)
 	Background = createSprite(&images.SPACE5, 1)
 	PlayerBullet = createSprite(&images.SHOT2, 8)
-	EnemyBullet = createSprite(&images.SHOT2, 8)
+	EnemyBullet = createSprite(&images.SHOT1, 8)
 }
 
 // создает изображения из байтового массива
