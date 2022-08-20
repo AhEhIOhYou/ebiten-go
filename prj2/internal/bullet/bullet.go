@@ -44,7 +44,7 @@ func (b *Bullet) Init(kind Kind, degree int) {
 	case KindPlayerNormal:
 		b.spr = sprite.PlayerBullet
 		b.setSize(4, 4)
-		b.setSpeed(10, degree)
+		b.setSpeed(20, degree)
 		break
 	case KindEnemyNormal:
 		b.spr = sprite.PlayerBullet

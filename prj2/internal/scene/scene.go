@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	maxPlayerShot = 200
+	maxPlayerShot = 500
 )
 
 var (

@@ -22,7 +22,7 @@ func NewNormal(bulletKind bullet.Kind) *Normal {
 
 // Fire create shots
 func (w *Normal) Fire(shooter Shooter, bullets *objectpool.Pool) {
-	if time.Since(w.lastShotTime).Milliseconds() < 20 {
+	if time.Since(w.lastShotTime).Milliseconds() < 200 {
 		return
 	}
 	w.lastShotTime = time.Now()
@@ -33,4 +33,18 @@ func (w *Normal) Fire(shooter Shooter, bullets *objectpool.Pool) {
 	}
 	b.Init(w.bulletKind, shooter.GetDegree())
 	b.SetPosition(shooter.GetX(), shooter.GetY())
+
+	b2 := (*bullet.Bullet)(bullets.CreateFromPool())
+	if b2 == nil {
+		return
+	}
+	b2.Init(w.bulletKind, shooter.GetDegree())
+	b2.SetPosition(shooter.GetX()+20, shooter.GetY())
+
+	b3 := (*bullet.Bullet)(bullets.CreateFromPool())
+	if b3 == nil {
+		return
+	}
+	b3.Init(w.bulletKind, shooter.GetDegree())
+	b3.SetPosition(shooter.GetX()-20, shooter.GetY())
 }
