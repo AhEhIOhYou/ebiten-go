@@ -1,19 +1,22 @@
 package list
 
+import "unsafe"
+
 type Value interface{}
 
 type Element struct {
-	value Value
+	value unsafe.Pointer
 	prev  *Element
 	next  *Element
 }
 
-func NewElement(v Value) *Element {
-	e := &Element{value: v}
+func NewElement(value unsafe.Pointer) *Element {
+	e := &Element{}
+	e.value = value
 	return e
 }
 
-func (e *Element) GetValue() Value {
+func (e *Element) GetValue() unsafe.Pointer {
 	return e.value
 }
 

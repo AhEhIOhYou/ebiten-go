@@ -1,14 +1,23 @@
 package list
 
+import "unsafe"
+
 type List struct {
 	length int
 	first  *Element
 	last   *Element
+	ite    *Iterator
 }
 
 func NewList() *List {
 	l := &List{}
+	l.ite = &Iterator{}
 	return l
+}
+
+func (l *List) AddValue(value unsafe.Pointer) {
+	e := NewElement(value)
+	l.AddElement(e)
 }
 
 func (l *List) AddElement(e *Element) {
@@ -41,11 +50,6 @@ func (l *List) RemoveElement(e *Element) {
 	l.length--
 }
 
-func (l *List) AddValue(v Value) {
-	e := NewElement(v)
-	l.AddElement(e)
-}
-
 func (l *List) GetFirstElement() *Element {
 	return l.first
 }
@@ -58,4 +62,10 @@ func (l *List) Clear() {
 	l.first = nil
 	l.last = nil
 	l.length = 0
+}
+
+func (l *List) GetIterator() *Iterator {
+	l.ite.list = l
+	l.ite.current = l.GetFirstElement()
+	return l.ite
 }
