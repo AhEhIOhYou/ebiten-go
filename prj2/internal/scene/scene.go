@@ -17,16 +17,13 @@ const (
 	maxPlayerShot = 500
 )
 
-var (
-	input        *inputs.Input
-	currentField *fields.Field
-
-	player        *actors.Player
-	playerBullets *objectpool.Pool
-)
-
 // Scene представляет сцену
 type Scene struct {
+	input         *inputs.Input
+	field         *fields.Field
+	player        *actors.Player
+	playerBullets *objectpool.Pool
+
 	time         time.Time
 	screenWidth  int
 	screenHeight int
@@ -39,36 +36,43 @@ func NewScene(screenWidth, screenHeight int) *Scene {
 	stg.screenHeight = screenHeight
 	stg.time = time.Now()
 	stg.initGame()
+	stg.setupGame()
 	return stg
 }
 
 // initGame инициализирует игру
 func (stg *Scene) initGame() {
-	input = inputs.New()
-	currentField = fields.NewField()
+	field := fields.NewField()
+	stg.input = inputs.New()
+	stg.field = field
+	stg.player = actors.NewPlayer(field)
 
-	player = actors.NewPlayer(currentField)
-	player.Init()
-	player.SetMainWeapon(tools.NewNormal(bullet.KindPlayerNormal))
-
-	playerBullets = objectpool.NewPool()
+	stg.playerBullets = objectpool.NewPool()
 	for i := 0; i < maxPlayerShot; i++ {
-		playerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(currentField)))
+		stg.playerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
 	}
+}
+
+func (stg *Scene) setupGame() {
+	stg.player.Init()
+	stg.player.SetMainWeapon(tools.NewNormal(bullet.KindPlayerNormal))
 }
 
 // Update обновляет состояние сцены (актеров и окружения)
 func (stg *Scene) Update() {
-	input.Update()
-	checkCollision()
-	player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
+	input := stg.input
 
-	player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
-	if input.Fire {
-		player.FireWeapon(playerBullets)
+	input.Update()
+	if input.Reload {
+		stg.setupGame()
 	}
 
-	for ite := playerBullets.GetIterator(); ite.HasNext(); {
+	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
+	if input.Fire {
+		stg.player.FireWeapon(stg.playerBullets)
+	}
+
+	for ite := stg.playerBullets.GetIterator(); ite.HasNext(); {
 		obj := ite.Next()
 		p := (*bullet.Bullet)(obj.GetData())
 		if p.IsActive() == false {
@@ -77,20 +81,17 @@ func (stg *Scene) Update() {
 		}
 		p.Move()
 	}
-	playerBullets.Sweep()
+	stg.playerBullets.Sweep()
 }
 
 // Draw отрисовывает всех действиующих лиц сцены
 func (stg *Scene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0x10, 0x10, 0x30, 0xff})
-	currentField.Draw(screen)
-	player.Draw(screen)
+	stg.field.Draw(screen)
+	stg.player.Draw(screen)
 
-	for ite := playerBullets.GetIterator(); ite.HasNext(); {
+	for ite := stg.playerBullets.GetIterator(); ite.HasNext(); {
 		p := (*bullet.Bullet)(ite.Next().GetData())
-		if p.IsActive() == false {
-			continue
-		}
 		p.Draw(screen)
 	}
 }

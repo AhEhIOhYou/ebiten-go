@@ -11,6 +11,7 @@ type Input struct {
 	Vertical     float64
 	Fire         bool
 	Focus        bool
+	Reload       bool
 	prevTickTime time.Time
 }
 
@@ -23,7 +24,9 @@ func New() *Input {
 
 // Update обновляет состояние управления
 func (i *Input) Update() {
-	if time.Since(i.prevTickTime).Milliseconds() < 50 {
+	i.Reload = ebiten.IsKeyPressed(ebiten.KeyR)
+
+	if time.Since(i.prevTickTime).Milliseconds() < 60 {
 		return
 	}
 	i.prevTickTime = time.Now()
