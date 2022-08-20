@@ -5,8 +5,8 @@ import (
 	"unsafe"
 )
 
-type Item struct {
-	isActive bool
+type Item interface {
+	IsActive() bool
 }
 
 type Pool struct {
@@ -21,6 +21,10 @@ func NewPool() *Pool {
 	p.pool = list.NewList()
 	p.ite = &Iterator{}
 	return p
+}
+
+func (p *Pool) GetActiveNum() int {
+	return p.actives.GetLength()
 }
 
 func (p *Pool) AddToPool(item unsafe.Pointer) {
@@ -52,15 +56,21 @@ func (p *Pool) CreateFromPool() unsafe.Pointer {
 }
 
 func (p *Pool) Sweep() {
-	ite := p.actives.GetIterator()
-	if ite.HasNext() == false {
-		return
-	}
-	for elem := ite.Next(); ite.HasNext(); elem = ite.Next() {
+	for ite := p.actives.GetIterator(); ite.HasNext(); {
+		elem := ite.Next()
 		o := (*Object)(elem.GetValue())
 		if o.isActive == false {
 			p.actives.RemoveElement(elem)
 			p.pool.AddElement(elem)
 		}
 	}
+}
+
+func (p *Pool) Clean() {
+	for ite := p.actives.GetIterator(); ite.HasNext(); {
+		elem := ite.Next()
+		o := (*Object)(elem.GetValue())
+		o.isActive = false
+	}
+	p.Sweep()
 }

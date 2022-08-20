@@ -69,3 +69,7 @@ func (l *List) GetIterator() *Iterator {
 	l.ite.current = l.GetFirstElement()
 	return l.ite
 }
+
+func (l *List) GetLength() int {
+	return l.length
+}
