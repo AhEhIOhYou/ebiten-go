@@ -23,6 +23,7 @@ type Actor struct {
 	life          int
 	mainWeapon    tools.Weapon
 	movdweTo      struct{ x, y float64 }
+	bulletPool    *objectpool.Pool
 }
 
 func NewActor() *Actor {
@@ -83,7 +84,7 @@ func (a *Actor) SetSpeed(speed float64, degree int) {
 	a.vy = math.Sin(utils.DegToRad(a.degree)) * speed
 }
 
-// SetMainWeapon a
+// SetMainWeapon устанавливает пушку
 func (a *Actor) SetMainWeapon(mainWeapon tools.Weapon) {
 	a.mainWeapon = mainWeapon
 }
@@ -94,12 +95,12 @@ func (a *Actor) SetPosition(x, y float64) {
 	a.y = y
 }
 
-// FireWeapon fire the weapon
-func (a *Actor) FireWeapon(bullets *objectpool.Pool) {
-	a.mainWeapon.Fire(a, bullets)
+// FireWeapon ведет огонь из оружия
+func (a *Actor) FireWeapon() {
+	a.mainWeapon.Fire(a.x, a.y, a.degree)
 }
 
-// SetField returns field
+// SetField возвращает поле игрока
 func (a *Actor) SetField(f *fields.Field) {
 	a.currField = f
 }

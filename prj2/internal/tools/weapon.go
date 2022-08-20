@@ -1,17 +1,16 @@
 package tools
 
 import (
-	"github.com/AhEhIOhYou/project2/prj2/internal/objectpool"
+	"time"
 )
 
-// Shooter represents shooter
-type Shooter interface {
-	GetX() float64
-	GetY() float64
-	GetDegree() int
+type Weapon interface {
+	Fire(x, y float64, degree int)
 }
 
-// Weapon represents weapon
-type Weapon interface {
-	Fire(shooter Shooter, shots *objectpool.Pool)
+type shotFactoryFunction func(x, y float64, degree int)
+
+type baseWeapon struct {
+	shotFactory  shotFactoryFunction
+	lastShotTime time.Time
 }

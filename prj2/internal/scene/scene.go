@@ -5,8 +5,7 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/bullet"
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/inputs"
-	"github.com/AhEhIOhYou/project2/prj2/internal/objectpool"
-	"github.com/AhEhIOhYou/project2/prj2/internal/tools"
+	"github.com/AhEhIOhYou/project2/prj2/internal/shared"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image/color"
 	"time"
@@ -19,10 +18,9 @@ const (
 
 // Scene представляет сцену
 type Scene struct {
-	input         *inputs.Input
-	field         *fields.Field
-	player        *actors.Player
-	playerBullets *objectpool.Pool
+	input  *inputs.Input
+	field  *fields.Field
+	player *actors.Player
 
 	time         time.Time
 	screenWidth  int
@@ -45,17 +43,16 @@ func (stg *Scene) initGame() {
 	field := fields.NewField()
 	stg.input = inputs.New()
 	stg.field = field
-	stg.player = actors.NewPlayer(field)
+	stg.player = actors.NewPlayer(field, shared.PlayerBullets)
 
-	stg.playerBullets = objectpool.NewPool()
 	for i := 0; i < maxPlayerShot; i++ {
-		stg.playerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
+		shared.PlayerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
 	}
 }
 
 func (stg *Scene) setupGame() {
+	shared.PlayerBullets.Clean()
 	stg.player.Init()
-	stg.player.SetMainWeapon(tools.NewNormal(bullet.KindPlayerNormal))
 }
 
 // Update обновляет состояние сцены (актеров и окружения)
@@ -69,19 +66,19 @@ func (stg *Scene) Update() {
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
-		stg.player.FireWeapon(stg.playerBullets)
+		stg.player.FireWeapon()
 	}
 
-	for ite := stg.playerBullets.GetIterator(); ite.HasNext(); {
+	for ite := shared.PlayerBullets.GetIterator(); ite.HasNext(); {
 		obj := ite.Next()
 		p := (*bullet.Bullet)(obj.GetData())
 		if p.IsActive() == false {
 			obj.SetInactive()
 			continue
 		}
-		p.Move()
+		p.Update()
 	}
-	stg.playerBullets.Sweep()
+	shared.PlayerBullets.Sweep()
 }
 
 // Draw отрисовывает всех действиующих лиц сцены
@@ -90,7 +87,7 @@ func (stg *Scene) Draw(screen *ebiten.Image) {
 	stg.field.Draw(screen)
 	stg.player.Draw(screen)
 
-	for ite := stg.playerBullets.GetIterator(); ite.HasNext(); {
+	for ite := shared.PlayerBullets.GetIterator(); ite.HasNext(); {
 		p := (*bullet.Bullet)(ite.Next().GetData())
 		p.Draw(screen)
 	}
