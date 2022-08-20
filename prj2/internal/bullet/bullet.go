@@ -22,7 +22,7 @@ type Bullet struct {
 	sprIndex      int
 }
 
-// KindBullet represetns the kind of the shot
+// Kind represetns the kind of the shot
 type Kind int
 
 const (
@@ -31,8 +31,9 @@ const (
 )
 
 // NewBullet возвращает инициализированную пулю
-func NewBullet() *Bullet {
+func NewBullet(f *fields.Field) *Bullet {
 	bullet := &Bullet{}
+	bullet.currField = f
 	return bullet
 }
 

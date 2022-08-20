@@ -5,10 +5,12 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/bullet"
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/inputs"
+	"github.com/AhEhIOhYou/project2/prj2/internal/objectpool"
 	"github.com/AhEhIOhYou/project2/prj2/internal/tools"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image/color"
 	"time"
+	"unsafe"
 )
 
 const (
@@ -18,8 +20,9 @@ const (
 var (
 	input        *inputs.Input
 	currentField *fields.Field
-	player       *actors.Player
-	playerShots  [maxPlayerShot]*bullet.Bullet
+
+	player        *actors.Player
+	playerBullets *objectpool.Pool
 )
 
 // Scene представляет сцену
@@ -44,14 +47,13 @@ func (stg *Scene) initGame() {
 	input = inputs.New()
 	currentField = fields.NewField()
 
-	player = actors.NewPlayer()
+	player = actors.NewPlayer(currentField)
 	player.Init()
 	player.SetMainWeapon(tools.NewNormal(bullet.KindPlayerNormal))
-	player.SetField(currentField)
 
-	for i := 0; i < len(playerShots); i++ {
-		playerShots[i] = bullet.NewBullet()
-		playerShots[i].SetField(currentField)
+	playerBullets = objectpool.NewPool()
+	for i := 0; i < maxPlayerShot; i++ {
+		playerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(currentField)))
 	}
 }
 
@@ -63,16 +65,19 @@ func (stg *Scene) Update() {
 
 	player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
-		player.FireWeapon(playerShots[:])
+		player.FireWeapon(playerBullets)
 	}
 
-	for i := 0; i < len(playerShots); i++ {
-		p := playerShots[i]
+	for ite := playerBullets.GetIterator(); ite.HasNext(); {
+		obj := ite.Next()
+		p := (*bullet.Bullet)(obj.GetData())
 		if p.IsActive() == false {
+			obj.SetInactive()
 			continue
 		}
 		p.Move()
 	}
+	playerBullets.Sweep()
 }
 
 // Draw отрисовывает всех действиующих лиц сцены
@@ -81,8 +86,8 @@ func (stg *Scene) Draw(screen *ebiten.Image) {
 	currentField.Draw(screen)
 	player.Draw(screen)
 
-	for i := 0; i < len(playerShots); i++ {
-		p := playerShots[i]
+	for ite := playerBullets.GetIterator(); ite.HasNext(); {
+		p := (*bullet.Bullet)(ite.Next().GetData())
 		if p.IsActive() == false {
 			continue
 		}
@@ -92,10 +97,5 @@ func (stg *Scene) Draw(screen *ebiten.Image) {
 
 // checkCollision Проверка столкновений
 func checkCollision() {
-	for i := 0; i < len(playerShots); i++ {
-		p := playerShots[i]
-		if p.IsActive() == false {
-			continue
-		}
-	}
+	// В разрабокте
 }

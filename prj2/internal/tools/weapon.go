@@ -1,7 +1,7 @@
 package tools
 
 import (
-	"github.com/AhEhIOhYou/project2/prj2/internal/bullet"
+	"github.com/AhEhIOhYou/project2/prj2/internal/objectpool"
 )
 
 // Shooter represents shooter
@@ -13,5 +13,5 @@ type Shooter interface {
 
 // Weapon represents weapon
 type Weapon interface {
-	Fire(shooter Shooter, shots []*bullet.Bullet)
+	Fire(shooter Shooter, shots *objectpool.Pool)
 }

@@ -2,6 +2,7 @@ package tools
 
 import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/bullet"
+	"github.com/AhEhIOhYou/project2/prj2/internal/objectpool"
 	"time"
 )
 
@@ -20,20 +21,16 @@ func NewNormal(bulletKind bullet.Kind) *Normal {
 }
 
 // Fire create shots
-func (w *Normal) Fire(shooter Shooter, shots []*bullet.Bullet) {
+func (w *Normal) Fire(shooter Shooter, bullets *objectpool.Pool) {
 	if time.Since(w.lastShotTime).Milliseconds() < 20 {
 		return
 	}
 	w.lastShotTime = time.Now()
 
-	for i := 0; i < len(shots); i++ {
-		s := shots[i]
-		if s.IsActive() {
-			continue
-		}
-		s.Init(w.bulletKind, shooter.GetDegree())
-		s.SetPosition(shooter.GetX(), shooter.GetY())
-		break
+	b := (*bullet.Bullet)(bullets.CreateFromPool())
+	if b == nil {
+		return
 	}
-
+	b.Init(w.bulletKind, shooter.GetDegree())
+	b.SetPosition(shooter.GetX(), shooter.GetY())
 }
