@@ -1,6 +1,7 @@
 package actors
 
 import (
+	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/sprite"
 	"github.com/AhEhIOhYou/project2/prj2/internal/tools"
 	"github.com/AhEhIOhYou/project2/prj2/internal/utils"
@@ -11,10 +12,12 @@ import (
 const (
 	initPlayerSpeed  = 3
 	focusPlayerSpeed = 1.5
+	playerDegree     = 270
 	initPositionX    = 320
 	initPositionY    = 320
 	playerWidth      = 10
 	playerHeight     = 10
+	playerLife       = 100
 )
 
 // Player представляет игрока
@@ -26,16 +29,17 @@ type Player struct {
 }
 
 // NewPlayer возвращает инициализированного игрока
-func NewPlayer() *Player {
+func NewPlayer(f *fields.Field) *Player {
 	p := &Player{Actor: *NewActor()}
+	p.currField = f
 	return p
 }
 
 func (p *Player) Init() {
-	p.life = 10
-	p.setSize(10, 10)
-	p.SetPosition(320, 320)
-	p.SetSpeed(2, 270)
+	p.life = playerLife
+	p.setSize(playerWidth, playerHeight)
+	p.SetPosition(initPositionX, initPositionY)
+	p.SetSpeed(initPlayerSpeed, playerDegree)
 	p.isActive = true
 	p.spr = sprite.Player
 }
