@@ -6,37 +6,51 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/inputs"
 	"github.com/AhEhIOhYou/project2/prj2/internal/shared"
+	"github.com/AhEhIOhYou/project2/prj2/internal/ui"
+	"github.com/AhEhIOhYou/project2/prj2/internal/utils"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image/color"
 	"time"
 	"unsafe"
 )
 
+type gameState int
+
 const (
-	maxPlayerShot = 500
-	maxEnemyShot  = 5000
+	maxPlayerShot              = 500
+	maxEnemyShot               = 5000
+	gameStateLoading gameState = iota
+	gameStatePlaying
 )
 
 // Scene представляет сцену
 type Scene struct {
-	input  *inputs.Input
-	field  *fields.Field
-	player *actors.Player
-	enemy1 *actors.Enemy
+	state gameState
 
-	time         time.Time
-	screenWidth  int
-	screenHeight int
+	input      *inputs.Input
+	field      *fields.Field
+	time       time.Time
+	viewCenter struct{ x, y float64 }
+
+	player *actors.Player
+	enemy  *actors.Enemy
 }
 
 // NewScene вернет стандартную сцену
 func NewScene(screenWidth, screenHeight int) *Scene {
 	stg := &Scene{}
-	stg.screenWidth = screenWidth
-	stg.screenHeight = screenHeight
+
+	stg.state = gameStateLoading
+
+	stg.viewCenter.x = float64(ui.GetScreenWidth() / 2)
+	stg.viewCenter.y = float64(ui.GetScreenHeight() / 2)
 	stg.time = time.Now()
+
 	stg.initGame()
 	stg.setupGame()
+
+	stg.state = gameStatePlaying
+
 	return stg
 }
 
@@ -47,7 +61,7 @@ func (stg *Scene) initGame() {
 	stg.field = field
 	stg.player = actors.NewPlayer(field, shared.PlayerBullets)
 
-	stg.enemy1 = actors.NewEnemy(field, shared.EnemyBullets)
+	stg.enemy = actors.NewEnemy(field, shared.EnemyBullets)
 
 	for i := 0; i < maxPlayerShot; i++ {
 		shared.PlayerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
@@ -62,12 +76,14 @@ func (stg *Scene) setupGame() {
 	shared.PlayerBullets.Clean()
 	shared.EnemyBullets.Clean()
 	stg.player.Init()
-	stg.enemy1.Init(320, 200, 1)
+	stg.enemy.Init(320, 200, 1)
 }
 
 // Update обновляет состояние сцены (актеров и окружения)
 func (stg *Scene) Update() {
 	input := stg.input
+
+	stg.checkCollision()
 
 	input.Update()
 	if input.Reload {
@@ -75,8 +91,8 @@ func (stg *Scene) Update() {
 	}
 
 	if time.Since(stg.time).Seconds() > 1 {
-		stg.enemy1.SetDegree(stg.enemy1.GetDegree() + 6)
-		stg.enemy1.FireWeapon()
+		stg.enemy.SetDegree(stg.enemy.GetDegree() + 6)
+		stg.enemy.FireWeapon()
 	}
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
@@ -109,11 +125,11 @@ func (stg *Scene) Update() {
 
 // Draw отрисовывает всех действиующих лиц сцены
 func (stg *Scene) Draw(screen *ebiten.Image) {
-	screen.Fill(color.RGBA{0x10, 0x10, 0x30, 0xff})
+	screen.Fill(color.RGBA{R: 0x10, G: 0x10, B: 0x30, A: 0xff})
 	stg.field.Draw(screen)
 	stg.player.Draw(screen)
 
-	stg.enemy1.Draw(screen)
+	stg.enemy.Draw(screen)
 
 	for ite := shared.PlayerBullets.GetIterator(); ite.HasNext(); {
 		p := (*bullet.Bullet)(ite.Next().GetData())
@@ -127,6 +143,12 @@ func (stg *Scene) Draw(screen *ebiten.Image) {
 }
 
 // checkCollision Проверка столкновений
-func checkCollision() {
-	// В разрабокте
+func (stg *Scene) checkCollision() {
+
+	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {
+		e := (*bullet.Bullet)(ite.Next().GetData())
+		if utils.IsCollideWith(stg.player, e) == true {
+			//do something
+		}
+	}
 }
