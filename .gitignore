@@ -2,7 +2,7 @@
 *.exe
 *.dll
 *.out
-/project2
+/bin
 
 # Env
 .env!
