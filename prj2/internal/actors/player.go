@@ -15,8 +15,8 @@ const (
 	initPlayerSpeed  = 8
 	focusPlayerSpeed = 3
 	playerDegree     = 270
-	initPositionX    = 320
-	initPositionY    = 320
+	playerPosX       = 320
+	playerPosY       = 320
 	playerWidth      = 10
 	playerHeight     = 10
 	playerLife       = 100
@@ -41,7 +41,7 @@ func NewPlayer(f *fields.Field, bulletPool *objectpool.Pool) *Player {
 func (p *Player) Init() {
 	p.life = playerLife
 	p.setSize(playerWidth, playerHeight)
-	p.SetPosition(initPositionX, initPositionY)
+	p.SetPosition(playerPosX, playerPosY)
 	p.SetSpeed(initPlayerSpeed, playerDegree)
 	p.SetMainWeapon(tools.NewNormal(bullet.NormalPlayerShot))
 	p.isActive = true

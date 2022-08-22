@@ -100,6 +100,10 @@ func (a *Actor) FireWeapon() {
 	a.mainWeapon.Fire(a.x, a.y, a.degree)
 }
 
+func (a *Actor) FireWeaponTarget(x, y float64, degree int) {
+	a.mainWeapon.Fire(x, y, degree)
+}
+
 // SetField возвращает поле игрока
 func (a *Actor) SetField(f *fields.Field) {
 	a.currField = f

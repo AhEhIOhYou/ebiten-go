@@ -14,6 +14,7 @@ import (
 
 const (
 	maxPlayerShot = 500
+	maxEnemyShot  = 1000
 )
 
 // Scene представляет сцену
@@ -21,6 +22,8 @@ type Scene struct {
 	input  *inputs.Input
 	field  *fields.Field
 	player *actors.Player
+	enemy1 *actors.Enemy
+	enemy2 *actors.Enemy
 
 	time         time.Time
 	screenWidth  int
@@ -45,14 +48,24 @@ func (stg *Scene) initGame() {
 	stg.field = field
 	stg.player = actors.NewPlayer(field, shared.PlayerBullets)
 
+	stg.enemy1 = actors.NewEnemy(field, shared.EnemyBullets)
+	stg.enemy2 = actors.NewEnemy(field, shared.EnemyBullets)
+
 	for i := 0; i < maxPlayerShot; i++ {
 		shared.PlayerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
+	}
+
+	for i := 0; i < maxEnemyShot; i++ {
+		shared.EnemyBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
 	}
 }
 
 func (stg *Scene) setupGame() {
 	shared.PlayerBullets.Clean()
+	shared.EnemyBullets.Clean()
 	stg.player.Init()
+	stg.enemy1.Init(0, 50, 1)
+	stg.enemy2.Init(640, 50, 1)
 }
 
 // Update обновляет состояние сцены (актеров и окружения)
@@ -64,10 +77,27 @@ func (stg *Scene) Update() {
 		stg.setupGame()
 	}
 
+	stg.enemy1.Action(5, 0)
+	stg.enemy2.Action(-5, 0)
+
+	stg.enemy1.FireWeapon()
+	stg.enemy2.FireWeapon()
+
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
 		stg.player.FireWeapon()
 	}
+
+	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {
+		obj := ite.Next()
+		p := (*bullet.Bullet)(obj.GetData())
+		if p.IsActive() == false {
+			obj.SetInactive()
+			continue
+		}
+		p.Update()
+	}
+	shared.EnemyBullets.Sweep()
 
 	for ite := shared.PlayerBullets.GetIterator(); ite.HasNext(); {
 		obj := ite.Next()
@@ -86,8 +116,15 @@ func (stg *Scene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0x10, 0x10, 0x30, 0xff})
 	stg.field.Draw(screen)
 	stg.player.Draw(screen)
+	stg.enemy1.Draw(screen)
+	stg.enemy2.Draw(screen)
 
 	for ite := shared.PlayerBullets.GetIterator(); ite.HasNext(); {
+		p := (*bullet.Bullet)(ite.Next().GetData())
+		p.Draw(screen)
+	}
+
+	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {
 		p := (*bullet.Bullet)(ite.Next().GetData())
 		p.Draw(screen)
 	}

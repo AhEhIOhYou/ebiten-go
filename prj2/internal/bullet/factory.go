@@ -4,6 +4,7 @@ import "github.com/AhEhIOhYou/project2/prj2/internal/shared"
 
 var (
 	playerNormal = &playerNormalController{baseController{}}
+	enemyWeapon1 = &enemyWeapon1Controller{baseController{}}
 )
 
 // NormalPlayerShot Создает выстрел
@@ -25,4 +26,15 @@ func NormalPlayerShot(x, y float64, degree int) {
 		return
 	}
 	b3.init(playerNormal, x-5, y-10, degree-5)
+}
+
+func EnemyWeapon1Shot(x, y float64, degree int) {
+	var cords = []float64{-20, -10, 0, 10, 20}
+	for i := 0; i < 5; i++ {
+		b := (*Bullet)(shared.EnemyBullets.CreateFromPool())
+		if b == nil {
+			return
+		}
+		b.init(enemyWeapon1, x+cords[i], y, 90)
+	}
 }
