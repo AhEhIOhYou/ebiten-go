@@ -28,7 +28,7 @@ var (
 func (g *Game) Update() error {
 	if isWindowSizeSet && !isInitialized {
 		sprite.LoadSprites()
-		currentScene = scene.NewScene(screenWidth, screenHeight)
+		currentScene = scene.NewScene()
 		isInitialized = true
 		return nil
 	}

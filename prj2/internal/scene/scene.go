@@ -34,10 +34,11 @@ type Scene struct {
 
 	player *actors.Player
 	enemy  *actors.Enemy
+	enemy2 *actors.Enemy
 }
 
 // NewScene вернет стандартную сцену
-func NewScene(screenWidth, screenHeight int) *Scene {
+func NewScene() *Scene {
 	stg := &Scene{}
 
 	stg.state = gameStateLoading
@@ -62,6 +63,7 @@ func (stg *Scene) initGame() {
 	stg.player = actors.NewPlayer(field, shared.PlayerBullets)
 
 	stg.enemy = actors.NewEnemy(field, shared.EnemyBullets)
+	stg.enemy2 = actors.NewEnemy(field, shared.EnemyBullets)
 
 	for i := 0; i < maxPlayerShot; i++ {
 		shared.PlayerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
@@ -76,7 +78,8 @@ func (stg *Scene) setupGame() {
 	shared.PlayerBullets.Clean()
 	shared.EnemyBullets.Clean()
 	stg.player.Init()
-	stg.enemy.Init(320, 200, 1)
+	stg.enemy.Init(200, 200, 1)
+	stg.enemy2.Init(440, 200, 1)
 }
 
 // Update обновляет состояние сцены (актеров и окружения)
@@ -93,6 +96,11 @@ func (stg *Scene) Update() {
 	if time.Since(stg.time).Seconds() > 1 {
 		stg.enemy.SetDegree(stg.enemy.GetDegree() + 6)
 		stg.enemy.FireWeapon()
+	}
+
+	if time.Since(stg.time).Seconds() > 1 {
+		stg.enemy2.SetDegree(stg.enemy2.GetDegree() + 12)
+		stg.enemy2.FireWeapon()
 	}
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
@@ -130,6 +138,7 @@ func (stg *Scene) Draw(screen *ebiten.Image) {
 	stg.player.Draw(screen)
 
 	stg.enemy.Draw(screen)
+	stg.enemy2.Draw(screen)
 
 	for ite := shared.PlayerBullets.GetIterator(); ite.HasNext(); {
 		p := (*bullet.Bullet)(ite.Next().GetData())
