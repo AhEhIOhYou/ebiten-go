@@ -100,8 +100,8 @@ func (a *Actor) FireWeapon() {
 	a.mainWeapon.Fire(a.x, a.y, a.degree)
 }
 
-func (a *Actor) FireWeaponTarget(x, y float64, degree int) {
-	a.mainWeapon.Fire(x, y, degree)
+func (a *Actor) FireWeaponTarget(degree int) {
+	a.mainWeapon.Fire(a.x, a.y, degree)
 }
 
 // SetField возвращает поле игрока
@@ -112,4 +112,7 @@ func (a *Actor) SetField(f *fields.Field) {
 func (a *Actor) setSize(width, height float64) {
 	a.width = width
 	a.height = height
+}
+func (a *Actor) SetDegree(degree int) {
+	a.degree = degree
 }

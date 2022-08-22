@@ -29,12 +29,9 @@ func NormalPlayerShot(x, y float64, degree int) {
 }
 
 func EnemyWeapon1Shot(x, y float64, degree int) {
-	var cords = []float64{-20, -10, 0, 10, 20}
-	for i := 0; i < 5; i++ {
-		b := (*Bullet)(shared.EnemyBullets.CreateFromPool())
-		if b == nil {
-			return
-		}
-		b.init(enemyWeapon1, x+cords[i], y, 90)
+	b := (*Bullet)(shared.EnemyBullets.CreateFromPool())
+	if b == nil {
+		return
 	}
+	b.init(enemyWeapon1, x, y, degree)
 }

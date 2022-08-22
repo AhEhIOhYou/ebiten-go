@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	initPlayerSpeed  = 8
-	focusPlayerSpeed = 3
+	initPlayerSpeed  = 6
+	focusPlayerSpeed = 1.5
 	playerDegree     = 270
 	playerPosX       = 320
 	playerPosY       = 320
