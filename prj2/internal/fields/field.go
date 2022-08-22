@@ -40,7 +40,7 @@ func NewField() *Field {
 
 // Draw отрисовывает поле
 func (f *Field) Draw(screen *ebiten.Image) {
-	sprite.Background.SetPosition(float64(f.x), float64(f.y))
+	sprite.Background.SetPosition(f.x, f.y)
 	op := &ebiten.DrawImageOptions{}
 	screen.DrawImage(f.boundaryImage, op)
 }
