@@ -12,7 +12,7 @@ func NewEnemyWeapon1(factory shotFactoryFunction) *EnemyWeapon1 {
 }
 
 func (w *EnemyWeapon1) Fire(x, y float64, degree int) {
-	if time.Since(w.lastShotTime).Milliseconds() < 50 {
+	if time.Since(w.lastShotTime).Milliseconds() < 36 {
 		return
 	}
 	w.lastShotTime = time.Now()
