@@ -6,6 +6,7 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/inputs"
 	"github.com/AhEhIOhYou/project2/prj2/internal/shared"
+	"github.com/AhEhIOhYou/project2/prj2/internal/tools"
 	"github.com/AhEhIOhYou/project2/prj2/internal/ui"
 	"github.com/AhEhIOhYou/project2/prj2/internal/utils"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -60,10 +61,17 @@ func (stg *Scene) initGame() {
 	field := fields.NewField()
 	stg.input = inputs.New()
 	stg.field = field
+
 	stg.player = actors.NewPlayer(field, shared.PlayerBullets)
+	stg.player.SetMainWeapon(tools.NewNormal(bullet.NormalPlayerShot))
+	stg.player.SetWeaponCooldown(10)
 
 	stg.enemy = actors.NewEnemy(field, shared.EnemyBullets)
+	stg.enemy.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeapon1Shot))
+	stg.enemy.SetWeaponCooldown(100)
 	stg.enemy2 = actors.NewEnemy(field, shared.EnemyBullets)
+	stg.enemy.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeapon1Shot))
+	stg.enemy.SetWeaponCooldown(100)
 
 	for i := 0; i < maxPlayerShot; i++ {
 		shared.PlayerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
@@ -80,6 +88,7 @@ func (stg *Scene) setupGame() {
 	stg.player.Init()
 	stg.enemy.Init(200, 200, 1)
 	stg.enemy2.Init(440, 200, 1)
+	stg.time = time.Now()
 }
 
 // Update обновляет состояние сцены (актеров и окружения)
@@ -94,18 +103,15 @@ func (stg *Scene) Update() {
 	}
 
 	if time.Since(stg.time).Seconds() > 1 {
-		stg.enemy.SetDegree(stg.enemy.GetDegree() + 6)
-		stg.enemy.FireWeapon()
-	}
-
-	if time.Since(stg.time).Seconds() > 1 {
-		stg.enemy2.SetDegree(stg.enemy2.GetDegree() + 12)
-		stg.enemy2.FireWeapon()
+		if time.Since(stg.time).Seconds() < 2 {
+			events[0](stg)
+			events[1](stg)
+		}
 	}
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
-		stg.player.FireWeapon()
+		stg.player.FireWeapon(stg.player.GetDegree())
 	}
 
 	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {

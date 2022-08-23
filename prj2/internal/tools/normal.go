@@ -16,7 +16,7 @@ func NewNormal(factory shotFactoryFunction) *Normal {
 
 // Fire создает выстрелы
 func (w *Normal) Fire(x, y float64, degree int) {
-	if time.Since(w.lastShotTime).Milliseconds() < 10 {
+	if time.Since(w.lastShotTime).Milliseconds() < w.cooldown {
 		return
 	}
 	w.lastShotTime = time.Now()

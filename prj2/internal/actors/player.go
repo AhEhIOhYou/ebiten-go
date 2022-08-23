@@ -1,7 +1,6 @@
 package actors
 
 import (
-	"github.com/AhEhIOhYou/project2/prj2/internal/bullet"
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/objectpool"
 	"github.com/AhEhIOhYou/project2/prj2/internal/sprite"
@@ -43,7 +42,6 @@ func (p *Player) Init() {
 	p.setSize(playerWidth, playerHeight)
 	p.SetPosition(playerPosX, playerPosY)
 	p.SetSpeed(initPlayerSpeed, playerDegree)
-	p.SetMainWeapon(tools.NewNormal(bullet.NormalPlayerShot))
 	p.isActive = true
 	p.spr = sprite.Player
 }

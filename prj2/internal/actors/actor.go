@@ -95,12 +95,7 @@ func (a *Actor) SetPosition(x, y float64) {
 	a.y = y
 }
 
-// FireWeapon ведет огонь из оружия
-func (a *Actor) FireWeapon() {
-	a.mainWeapon.Fire(a.x, a.y, a.degree)
-}
-
-func (a *Actor) FireWeaponTarget(degree int) {
+func (a *Actor) FireWeapon(degree int) {
 	a.mainWeapon.Fire(a.x, a.y, degree)
 }
 
@@ -115,4 +110,20 @@ func (a *Actor) setSize(width, height float64) {
 }
 func (a *Actor) SetDegree(degree int) {
 	a.degree = degree
+}
+
+func (a *Actor) GetWeaponDegree() int {
+	return a.mainWeapon.GetDegree()
+}
+
+func (a *Actor) SetWeaponDegree(degree int) {
+	a.mainWeapon.SetDegree(degree)
+}
+
+func (a *Actor) GetWeaponCooldown() int64 {
+	return a.mainWeapon.GetCooldown()
+}
+
+func (a *Actor) SetWeaponCooldown(cooldwon int64) {
+	a.mainWeapon.SetCooldown(cooldwon)
 }
