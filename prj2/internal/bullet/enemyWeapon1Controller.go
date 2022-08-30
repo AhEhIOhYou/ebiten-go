@@ -9,5 +9,5 @@ type enemyWeapon1Controller struct {
 func (c *enemyWeapon1Controller) init(b *Bullet) {
 	b.spr = sprite.EnemyBullet
 	b.setSize(8, 8)
-	b.setSpeed(2, b.degree)
+	b.setSpeed(0.5, b.degree)
 }

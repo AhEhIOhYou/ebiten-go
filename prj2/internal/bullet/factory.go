@@ -30,20 +30,9 @@ func NormalPlayerShot(x, y float64, degree int) {
 
 func EnemyWeapon1Shot(x, y float64, degree int) {
 
-	var data []float64
-
-	for i := 0.0; i < 360; i += 22.5 {
-		data = append(data, i)
+	b := (*Bullet)(shared.EnemyBullets.CreateFromPool())
+	if b == nil {
+		return
 	}
-	//var data = []int{0, 45, 90, 135, 180, 225, 270, 305}
-
-	//var data = []int{45, 135, 220, 305}
-
-	for i := 0; i < len(data); i++ {
-		b := (*Bullet)(shared.EnemyBullets.CreateFromPool())
-		if b == nil {
-			return
-		}
-		b.init(enemyWeapon1, x, y, degree+int(data[i]))
-	}
+	b.init(enemyWeapon1, x, y, degree)
 }

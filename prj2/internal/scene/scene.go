@@ -3,6 +3,7 @@ package scene
 import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/actors"
 	"github.com/AhEhIOhYou/project2/prj2/internal/bullet"
+	"github.com/AhEhIOhYou/project2/prj2/internal/eventmanager"
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/inputs"
 	"github.com/AhEhIOhYou/project2/prj2/internal/shared"
@@ -89,6 +90,7 @@ func (stg *Scene) setupGame() {
 	stg.enemy.Init(200, 200, 1)
 	stg.enemy2.Init(440, 200, 1)
 	stg.time = time.Now()
+
 }
 
 // Update обновляет состояние сцены (актеров и окружения)
@@ -102,17 +104,19 @@ func (stg *Scene) Update() {
 		stg.setupGame()
 	}
 
-	if time.Since(stg.time).Seconds() > 1 {
-		if time.Since(stg.time).Seconds() < 2 {
-			events[0](stg)
-			events[1](stg)
-		}
-	}
-
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
 		stg.player.FireWeapon(stg.player.GetDegree())
 	}
+
+	event := eventmanager.NewEvent()
+
+	event.OnTime(10).
+		Actor(stg.enemy).
+		Fire(true).Weapon(90, 5, 10).
+		Duration(3)
+
+	eventmanager.Execute(event)
 
 	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {
 		obj := ite.Next()
