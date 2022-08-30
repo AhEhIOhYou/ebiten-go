@@ -69,10 +69,9 @@ func (stg *Scene) initGame() {
 
 	stg.enemy = actors.NewEnemy(field, shared.EnemyBullets)
 	stg.enemy.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeapon1Shot))
-	stg.enemy.SetWeaponCooldown(100)
+
 	stg.enemy2 = actors.NewEnemy(field, shared.EnemyBullets)
-	stg.enemy.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeapon1Shot))
-	stg.enemy.SetWeaponCooldown(100)
+	stg.enemy2.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeapon1Shot))
 
 	for i := 0; i < maxPlayerShot; i++ {
 		shared.PlayerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
@@ -106,17 +105,24 @@ func (stg *Scene) Update() {
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
-		stg.player.FireWeapon(stg.player.GetDegree())
+		stg.player.FireWeapon(stg.player.GetDegree(), 10)
 	}
 
 	event := eventmanager.NewEvent()
+	event2 := eventmanager.NewEvent()
 
 	event.OnTime(10).
 		Actor(stg.enemy).
-		Fire(true).Weapon(90, 5, 10).
+		Fire(true).Weapon(90, 5, 10, 3).
+		Duration(3)
+
+	event2.OnTime(2).
+		Actor(stg.enemy2).
+		Fire(true).Weapon(0, 45, 50, 0.8).
 		Duration(3)
 
 	eventmanager.Execute(event)
+	eventmanager.Execute(event2)
 
 	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {
 		obj := ite.Next()
@@ -167,7 +173,7 @@ func (stg *Scene) checkCollision() {
 	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {
 		e := (*bullet.Bullet)(ite.Next().GetData())
 		if utils.IsCollideWith(stg.player, e) == true {
-			//do something
+			e.OnHit()
 		}
 	}
 }

@@ -10,10 +10,10 @@ func NewEnemyWeapon1(factory shotFactoryFunction) *EnemyWeapon1 {
 	return w
 }
 
-func (w *EnemyWeapon1) Fire(x, y float64, degree int) {
+func (w *EnemyWeapon1) Fire(x, y, speed float64, degree int) {
 	if time.Since(w.lastShotTime).Milliseconds() < w.cooldown {
 		return
 	}
 	w.lastShotTime = time.Now()
-	w.shotFactory(x, y, degree)
+	w.shotFactory(x, y, speed, degree)
 }

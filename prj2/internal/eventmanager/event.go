@@ -18,9 +18,10 @@ type Event struct {
 }
 
 type WeaponSetup struct {
-	degree   int
-	cooldown int64
-	rotation int
+	degree      int
+	cooldown    int64
+	rotation    int
+	bulletSpeed float64
 }
 
 func NewEvent() *Event {
@@ -74,17 +75,19 @@ func (ev *Event) Fire(doFire bool) (event *Event) {
 	return event
 }
 
-func (ev *Event) Weapon(degree int, cooldown int64, rotation int) (event *Event) {
+func (ev *Event) Weapon(degree int, cooldown int64, rotation int, bulletSpeed float64) (event *Event) {
 	event = ev.getInstance()
 	event.ws.degree = degree
 	event.ws.cooldown = cooldown
 	event.ws.rotation = rotation
+	event.ws.bulletSpeed = bulletSpeed
 	return event
 }
 
 func (ev *Event) SetupWeapon() {
 	ev.enemy.SetWeaponCooldown(ev.ws.cooldown)
 	ev.enemy.SetWeaponDegree(ev.enemy.GetWeaponDegree() + ev.ws.rotation)
+	ev.enemy.SetBulletSpeed(ev.ws.bulletSpeed)
 }
 
 func (ev *Event) Action(action string) (event *Event) {
@@ -104,6 +107,6 @@ func Execute(ev *Event) {
 	}
 	if ev.isFire {
 		ev.SetupWeapon()
-		ev.enemy.FireWeapon(ev.enemy.GetWeaponDegree())
+		ev.enemy.FireWeapon(ev.enemy.GetWeaponDegree(), ev.enemy.GetBulletSpeed())
 	}
 }

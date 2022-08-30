@@ -75,12 +75,13 @@ func (b *Bullet) setSpeed(speed float64, degree int) {
 	b.vy = math.Sin(utils.DegToRad(b.degree)) * speed
 }
 
-func (b *Bullet) init(controller controller, x, y float64, degree int) {
+func (b *Bullet) init(controller controller, x, y, speed float64, degree int) {
 	b.isActive = true
 	b.x = x
 	b.y = y
 	b.degree = degree
 	b.controller = controller
+	b.speed = speed
 	controller.init(b)
 }
 
