@@ -68,10 +68,10 @@ func (stg *Scene) initGame() {
 	stg.player.SetWeaponCooldown(10)
 
 	stg.enemy = actors.NewEnemy(field, shared.EnemyBullets)
-	stg.enemy.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeapon1Shot))
+	stg.enemy.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeaponShot))
 
 	stg.enemy2 = actors.NewEnemy(field, shared.EnemyBullets)
-	stg.enemy2.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeapon1Shot))
+	stg.enemy2.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeaponShot))
 
 	for i := 0; i < maxPlayerShot; i++ {
 		shared.PlayerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
@@ -105,7 +105,7 @@ func (stg *Scene) Update() {
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
-		stg.player.FireWeapon(stg.player.GetDegree(), 10)
+		stg.player.FireWeapon(stg.player.GetDegree(), 10, []int{0, 2})
 	}
 
 	event := eventmanager.NewEvent()
@@ -113,12 +113,14 @@ func (stg *Scene) Update() {
 
 	event.OnTime(10).
 		Actor(stg.enemy).
-		Fire(true).Weapon(90, 5, 10, 3).
+		Fire(true).Weapon(90, 500, 10, 3).
+		Shot([]int{0}).
 		Duration(3)
 
 	event2.OnTime(2).
 		Actor(stg.enemy2).
-		Fire(true).Weapon(0, 45, 50, 0.8).
+		Fire(true).Weapon(0, 100, 10, 0.8).
+		Shot([]int{-20, -10, 0, 10}).
 		Duration(3)
 
 	eventmanager.Execute(event)

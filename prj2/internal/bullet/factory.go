@@ -8,7 +8,7 @@ var (
 )
 
 // NormalPlayerShot Создает выстрел
-func NormalPlayerShot(x, y, speed float64, degree int) {
+func NormalPlayerShot(x, y, speed float64, degree int, angles []int) {
 	b1 := (*Bullet)(shared.PlayerBullets.CreateFromPool())
 	if b1 == nil {
 		return
@@ -28,11 +28,14 @@ func NormalPlayerShot(x, y, speed float64, degree int) {
 	b3.init(playerNormal, x-5, y-10, speed, degree-5)
 }
 
-func EnemyWeapon1Shot(x, y, speed float64, degree int) {
+func EnemyWeaponShot(x, y, speed float64, weaponDegree int, angles []int) {
 
-	b := (*Bullet)(shared.EnemyBullets.CreateFromPool())
-	if b == nil {
-		return
+	for i := 0; i < len(angles); i++ {
+		b := (*Bullet)(shared.EnemyBullets.CreateFromPool())
+		if b == nil {
+			return
+		}
+		b.init(enemyWeapon1, x, y, speed, weaponDegree+angles[i])
 	}
-	b.init(enemyWeapon1, x, y, speed, degree)
+
 }

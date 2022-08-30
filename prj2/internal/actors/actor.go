@@ -95,8 +95,8 @@ func (a *Actor) SetPosition(x, y float64) {
 	a.y = y
 }
 
-func (a *Actor) FireWeapon(degree int, speed float64) {
-	a.mainWeapon.Fire(a.x, a.y, speed, degree)
+func (a *Actor) FireWeapon(degree int, speed float64, angles []int) {
+	a.mainWeapon.Fire(a.x, a.y, speed, degree, angles)
 }
 
 // SetField возвращает поле игрока
@@ -134,4 +134,12 @@ func (a *Actor) GetBulletSpeed() float64 {
 
 func (a *Actor) SetBulletSpeed(speed float64) {
 	a.mainWeapon.SetBulletSpeed(speed)
+}
+
+func (a *Actor) GetAdjustAngles() []int {
+	return a.mainWeapon.GetAdjustAngles()
+}
+
+func (a *Actor) SetAdjustAngles(angles []int) {
+	a.mainWeapon.SetAdjustAngles(angles)
 }

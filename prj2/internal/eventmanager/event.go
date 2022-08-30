@@ -15,6 +15,7 @@ type Event struct {
 	player       *actors.Player
 	enemy        *actors.Enemy
 	ws           WeaponSetup
+	ss           ShotSetup
 }
 
 type WeaponSetup struct {
@@ -22,6 +23,10 @@ type WeaponSetup struct {
 	cooldown    int64
 	rotation    int
 	bulletSpeed float64
+}
+
+type ShotSetup struct {
+	angles []int
 }
 
 func NewEvent() *Event {
@@ -90,6 +95,16 @@ func (ev *Event) SetupWeapon() {
 	ev.enemy.SetBulletSpeed(ev.ws.bulletSpeed)
 }
 
+func (ev *Event) Shot(angles []int) (event *Event) {
+	event = ev.getInstance()
+	event.ss.angles = angles
+	return event
+}
+
+func (ev *Event) SetupShot() {
+	ev.enemy.SetAdjustAngles(ev.ss.angles)
+}
+
 func (ev *Event) Action(action string) (event *Event) {
 	event = ev.getInstance()
 	event.action = action
@@ -107,6 +122,7 @@ func Execute(ev *Event) {
 	}
 	if ev.isFire {
 		ev.SetupWeapon()
-		ev.enemy.FireWeapon(ev.enemy.GetWeaponDegree(), ev.enemy.GetBulletSpeed())
+		ev.SetupShot()
+		ev.enemy.FireWeapon(ev.enemy.GetWeaponDegree(), ev.enemy.GetBulletSpeed(), ev.enemy.GetAdjustAngles())
 	}
 }
