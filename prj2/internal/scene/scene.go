@@ -37,6 +37,8 @@ type Scene struct {
 	player *actors.Player
 	enemy  *actors.Enemy
 	enemy2 *actors.Enemy
+
+	eventManager *eventmanager.EventManager
 }
 
 // NewScene вернет стандартную сцену
@@ -60,8 +62,10 @@ func NewScene() *Scene {
 // initGame инициализирует игру
 func (stg *Scene) initGame() {
 	field := fields.NewField()
+	em := eventmanager.NewEventManager()
 	stg.input = inputs.New()
 	stg.field = field
+	stg.eventManager = em
 
 	stg.player = actors.NewPlayer(field, shared.PlayerBullets)
 	stg.player.SetMainWeapon(tools.NewNormal(bullet.NormalPlayerShot))
@@ -89,7 +93,8 @@ func (stg *Scene) setupGame() {
 	stg.enemy.Init(200, 200, 1)
 	stg.enemy2.Init(440, 200, 1)
 	stg.time = time.Now()
-
+	stg.LoadEvents()
+	stg.eventManager.Time = time.Now()
 }
 
 // Update обновляет состояние сцены (актеров и окружения)
@@ -97,6 +102,8 @@ func (stg *Scene) Update() {
 	input := stg.input
 
 	stg.checkCollision()
+
+	stg.eventManager.Execute()
 
 	input.Update()
 	if input.Reload {
@@ -107,24 +114,6 @@ func (stg *Scene) Update() {
 	if input.Fire {
 		stg.player.FireWeapon(stg.player.GetDegree(), 10, []int{0, 2})
 	}
-
-	event := eventmanager.NewEvent()
-	event2 := eventmanager.NewEvent()
-
-	event.OnTime(10).
-		Actor(stg.enemy).
-		Fire(true).Weapon(90, 500, 10, 3).
-		Shot([]int{0}).
-		Duration(3)
-
-	event2.OnTime(2).
-		Actor(stg.enemy2).
-		Fire(true).Weapon(0, 100, 10, 0.8).
-		Shot([]int{-20, -10, 0, 10}).
-		Duration(3)
-
-	eventmanager.Execute(event)
-	eventmanager.Execute(event2)
 
 	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {
 		obj := ite.Next()
@@ -147,6 +136,44 @@ func (stg *Scene) Update() {
 		p.Update()
 	}
 	shared.PlayerBullets.Sweep()
+}
+
+func (stg *Scene) LoadEvents() {
+
+	stg.eventManager.AddEvent(new(eventmanager.Event).
+		OnTime(2).
+		Actor(stg.enemy2).
+		Fire(true).Weapon(0, 19, 17, 0.7).
+		Shot([]int{5, -5}).
+		Duration(3))
+
+	stg.eventManager.AddEvent(new(eventmanager.Event).
+		OnTime(4).
+		Actor(stg.enemy).
+		Move(3, 1).
+		Duration(2))
+
+	stg.eventManager.AddEvent(new(eventmanager.Event).
+		OnTime(8).
+		Actor(stg.enemy2).
+		Fire(true).Weapon(0, 19, 17, 0.7).
+		Shot([]int{5, -5}).
+		Move(-1, 2).
+		Duration(2))
+
+	stg.eventManager.AddEvent(new(eventmanager.Event).
+		OnTime(10).
+		Actor(stg.enemy2).
+		Fire(true).Weapon(45, 200, 0, 2).
+		Shot([]int{0, 45, 90, 135, 180, 225, 270, 315}).
+		Duration(4))
+
+	stg.eventManager.AddEvent(new(eventmanager.Event).
+		OnTime(8).
+		Actor(stg.enemy).
+		Fire(true).Weapon(0, 10, 10, 0.8).
+		Shot([]int{0}).
+		Duration(10))
 }
 
 // Draw отрисовывает всех действиующих лиц сцены
