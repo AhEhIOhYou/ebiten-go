@@ -90,8 +90,8 @@ func (stg *Scene) setupGame() {
 	shared.PlayerBullets.Clean()
 	shared.EnemyBullets.Clean()
 	stg.player.Init()
-	stg.enemy.Init(200, 200, 1)
-	stg.enemy2.Init(440, 200, 1)
+	stg.enemy.Init(300, 170, 1)
+	stg.enemy2.Init(300, 170, 1)
 	stg.time = time.Now()
 	stg.LoadEvents()
 	stg.eventManager.Time = time.Now()
@@ -106,9 +106,9 @@ func (stg *Scene) Update() {
 	stg.eventManager.Execute()
 
 	input.Update()
-	if input.Reload {
-		stg.setupGame()
-	}
+	//if input.Reload {
+	//	stg.setupGame()
+	//}
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
@@ -141,39 +141,49 @@ func (stg *Scene) Update() {
 func (stg *Scene) LoadEvents() {
 
 	stg.eventManager.AddEvent(new(eventmanager.Event).
-		OnTime(2).
-		Actor(stg.enemy2).
-		Fire(true).Weapon(0, 19, 17, 0.7).
-		Shot([]int{5, -5}).
-		Duration(3))
+		OnTime(1).
+		Actor(stg.enemy).
+		Fire(true).
+		Weapon(0, 20, -2, 0.7).
+		Shot([]int{0}).
+		Duration(20).
+		UpdateStatus("new"))
 
 	stg.eventManager.AddEvent(new(eventmanager.Event).
 		OnTime(4).
-		Actor(stg.enemy).
-		Move(3, 1).
-		Duration(2))
+		Actor(stg.enemy2).
+		Fire(true).
+		Weapon(0, 13, 21, 2).
+		Shot([]int{-10, 0, 10}).
+		Duration(2).
+		UpdateStatus("new"))
 
 	stg.eventManager.AddEvent(new(eventmanager.Event).
 		OnTime(8).
 		Actor(stg.enemy2).
-		Fire(true).Weapon(0, 19, 17, 0.7).
-		Shot([]int{5, -5}).
-		Move(-1, 2).
-		Duration(2))
+		Fire(true).
+		Weapon(0, 13, -21, 2).
+		Shot([]int{-10, 0, 10}).
+		Duration(2).
+		UpdateStatus("new"))
 
 	stg.eventManager.AddEvent(new(eventmanager.Event).
-		OnTime(10).
+		OnTime(12).
 		Actor(stg.enemy2).
-		Fire(true).Weapon(45, 200, 0, 2).
-		Shot([]int{0, 45, 90, 135, 180, 225, 270, 315}).
-		Duration(4))
+		Fire(true).
+		Weapon(0, 13, 21, 2).
+		Shot([]int{-10, 0, 10}).
+		Duration(2).
+		UpdateStatus("new"))
 
 	stg.eventManager.AddEvent(new(eventmanager.Event).
-		OnTime(8).
-		Actor(stg.enemy).
-		Fire(true).Weapon(0, 10, 10, 0.8).
-		Shot([]int{0}).
-		Duration(10))
+		OnTime(16).
+		Actor(stg.enemy2).
+		Fire(true).
+		Weapon(0, 13, -21, 2).
+		Shot([]int{-10, 0, 10}).
+		Duration(2).
+		UpdateStatus("new"))
 }
 
 // Draw отрисовывает всех действиующих лиц сцены

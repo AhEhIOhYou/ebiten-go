@@ -16,6 +16,7 @@ type Event struct {
 	enemy        *actors.Enemy
 	ws           WeaponSetup
 	ss           ShotSetup
+	status       string
 }
 
 type WeaponSetup struct {
@@ -116,13 +117,7 @@ func (ev *Event) OnTime(seconds float64) (event *Event) {
 	return ev
 }
 
-func Execute(ev *Event) {
-	if ev.moveX != 0 || ev.moveY != 0 {
-		ev.enemy.Action(ev.moveX, ev.moveY)
-	}
-	if ev.isFire {
-		ev.SetupWeapon()
-		ev.SetupShot()
-		ev.enemy.FireWeapon(ev.enemy.GetWeaponDegree(), ev.enemy.GetBulletSpeed(), ev.enemy.GetAdjustAngles())
-	}
+func (ev *Event) UpdateStatus(status string) (event *Event) {
+	ev.status = status
+	return ev
 }
