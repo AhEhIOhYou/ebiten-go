@@ -44,7 +44,12 @@ func (em *EventManager) execute(event *Event) {
 			if event.isFire {
 				event.SetupWeapon()
 				event.SetupShot()
-				event.enemy.FireWeapon(event.enemy.GetWeaponDegree(), event.enemy.GetBulletSpeed(), event.enemy.GetAdjustAngles())
+				event.enemy.FireWeapon(
+					event.enemy.GetWeaponDegree(),
+					event.enemy.GetBulletSpeed(),
+					event.enemy.GetAdjustAngles(),
+					event.enemy.GetAdjustPos(),
+				)
 			}
 			return
 		}

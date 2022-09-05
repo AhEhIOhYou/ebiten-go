@@ -7,9 +7,9 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/inputs"
 	"github.com/AhEhIOhYou/project2/prj2/internal/shared"
-	"github.com/AhEhIOhYou/project2/prj2/internal/tools"
 	"github.com/AhEhIOhYou/project2/prj2/internal/ui"
 	"github.com/AhEhIOhYou/project2/prj2/internal/utils"
+	"github.com/AhEhIOhYou/project2/prj2/internal/weapon"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image/color"
 	"time"
@@ -68,14 +68,14 @@ func (stg *Scene) initGame() {
 	stg.eventManager = em
 
 	stg.player = actors.NewPlayer(field, shared.PlayerBullets)
-	stg.player.SetMainWeapon(tools.NewNormal(bullet.NormalPlayerShot))
+	stg.player.SetMainWeapon(weapon.NewPlayerWeapon(bullet.PlayerWeaponShot))
 	stg.player.SetWeaponCooldown(10)
 
 	stg.enemy = actors.NewEnemy(field, shared.EnemyBullets)
-	stg.enemy.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeaponShot))
+	stg.enemy.SetMainWeapon(weapon.NewEnemyWeapon(bullet.EnemyWeaponShot))
 
 	stg.enemy2 = actors.NewEnemy(field, shared.EnemyBullets)
-	stg.enemy2.SetMainWeapon(tools.NewEnemyWeapon1(bullet.EnemyWeaponShot))
+	stg.enemy2.SetMainWeapon(weapon.NewEnemyWeapon(bullet.EnemyWeaponShot))
 
 	for i := 0; i < maxPlayerShot; i++ {
 		shared.PlayerBullets.AddToPool(unsafe.Pointer(bullet.NewBullet(field)))
@@ -112,7 +112,7 @@ func (stg *Scene) Update() {
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
-		stg.player.FireWeapon(stg.player.GetDegree(), 10, []int{0, 2})
+		stg.player.FireWeapon(stg.player.GetDegree(), 10, []int{0, 2}, [][]float64{{0, 0}})
 	}
 
 	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {
@@ -145,7 +145,8 @@ func (stg *Scene) LoadEvents() {
 		Actor(stg.enemy).
 		Fire(true).
 		Weapon(0, 20, -2, 0.7).
-		Shot([]int{0}).
+		ShotAngles([]int{0}).
+		ShotPos([][]float64{{0, 0}}).
 		Duration(20).
 		UpdateStatus("new"))
 
@@ -154,7 +155,8 @@ func (stg *Scene) LoadEvents() {
 		Actor(stg.enemy2).
 		Fire(true).
 		Weapon(0, 13, 21, 2).
-		Shot([]int{-10, 0, 10}).
+		ShotAngles([]int{-10, 0, 10}).
+		ShotPos([][]float64{{50, 50}, {0, 0}, {-50, 50}}).
 		Duration(2).
 		UpdateStatus("new"))
 
@@ -163,7 +165,8 @@ func (stg *Scene) LoadEvents() {
 		Actor(stg.enemy2).
 		Fire(true).
 		Weapon(0, 13, -21, 2).
-		Shot([]int{-10, 0, 10}).
+		ShotAngles([]int{-10, 0, 10}).
+		ShotPos([][]float64{{0, 0}, {0, 0}, {0, 0}}).
 		Duration(2).
 		UpdateStatus("new"))
 
@@ -172,7 +175,8 @@ func (stg *Scene) LoadEvents() {
 		Actor(stg.enemy2).
 		Fire(true).
 		Weapon(0, 13, 21, 2).
-		Shot([]int{-10, 0, 10}).
+		ShotAngles([]int{-10, 0, 10}).
+		ShotPos([][]float64{{0, 0}, {0, 0}, {0, 0}}).
 		Duration(2).
 		UpdateStatus("new"))
 
@@ -181,7 +185,8 @@ func (stg *Scene) LoadEvents() {
 		Actor(stg.enemy2).
 		Fire(true).
 		Weapon(0, 13, -21, 2).
-		Shot([]int{-10, 0, 10}).
+		ShotAngles([]int{-10, 0, 10}).
+		ShotPos([][]float64{{0, 0}, {0, 0}, {0, 0}}).
 		Duration(2).
 		UpdateStatus("new"))
 }

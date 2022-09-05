@@ -28,6 +28,7 @@ type WeaponSetup struct {
 
 type ShotSetup struct {
 	angles []int
+	pos    [][]float64
 }
 
 func NewEvent() *Event {
@@ -96,14 +97,21 @@ func (ev *Event) SetupWeapon() {
 	ev.enemy.SetBulletSpeed(ev.ws.bulletSpeed)
 }
 
-func (ev *Event) Shot(angles []int) (event *Event) {
+func (ev *Event) ShotAngles(angles []int) (event *Event) {
 	event = ev.getInstance()
 	event.ss.angles = angles
 	return event
 }
 
+func (ev *Event) ShotPos(pos [][]float64) (event *Event) {
+	event = ev.getInstance()
+	event.ss.pos = pos
+	return event
+}
+
 func (ev *Event) SetupShot() {
 	ev.enemy.SetAdjustAngles(ev.ss.angles)
+	ev.enemy.SetAdjustPos(ev.ss.pos)
 }
 
 func (ev *Event) Action(action string) (event *Event) {

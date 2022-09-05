@@ -4,8 +4,8 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/objectpool"
 	"github.com/AhEhIOhYou/project2/prj2/internal/sprite"
-	"github.com/AhEhIOhYou/project2/prj2/internal/tools"
 	"github.com/AhEhIOhYou/project2/prj2/internal/utils"
+	"github.com/AhEhIOhYou/project2/prj2/internal/weapon"
 	"github.com/hajimehoshi/ebiten/v2"
 	"math"
 )
@@ -24,7 +24,7 @@ const (
 // Player представляет игрока
 type Player struct {
 	Actor
-	wep       tools.Weapon
+	wep       weapon.Weapon
 	shotSpeed float64
 	shotSize  float64
 }

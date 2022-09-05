@@ -5,8 +5,10 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/sprite"
 )
 
-// playerNormalController контроллер для инициализации пуль игрока
 type playerNormalController struct {
+	baseController
+}
+type enemyWeaponController struct {
 	baseController
 }
 
@@ -14,10 +16,6 @@ func (c *playerNormalController) init(b *Bullet) {
 	b.spr = sprite.PlayerBullet
 	b.setSize(4, 4)
 	b.setSpeed(30, b.degree)
-}
-
-type enemyWeaponController struct {
-	baseController
 }
 
 func (c *enemyWeaponController) init(b *Bullet) {
@@ -28,11 +26,11 @@ func (c *enemyWeaponController) init(b *Bullet) {
 
 var (
 	playerNormal = &playerNormalController{baseController{}}
-	enemyWeapon1 = &enemyWeaponController{baseController{}}
+	enemyWeapon  = &enemyWeaponController{baseController{}}
 )
 
-// NormalPlayerShot Создает выстрел
-func NormalPlayerShot(x, y, speed float64, degree int, angles []int) {
+// PlayerWeaponShot Создает выстрел
+func PlayerWeaponShot(x, y, speed float64, degree int, angles []int, pos [][]float64) {
 	b1 := (*Bullet)(shared.PlayerBullets.CreateFromPool())
 	if b1 == nil {
 		return
@@ -52,14 +50,14 @@ func NormalPlayerShot(x, y, speed float64, degree int, angles []int) {
 	b3.init(playerNormal, x-5, y-10, speed, degree-5)
 }
 
-func EnemyWeaponShot(x, y, speed float64, weaponDegree int, angles []int) {
+func EnemyWeaponShot(x, y, speed float64, weaponDegree int, angles []int, pos [][]float64) {
 
 	for i := 0; i < len(angles); i++ {
 		b := (*Bullet)(shared.EnemyBullets.CreateFromPool())
 		if b == nil {
 			return
 		}
-		b.init(enemyWeapon1, x, y, speed, weaponDegree+angles[i])
+		b.init(enemyWeapon, x+pos[i][0], y+pos[i][1], speed, weaponDegree+angles[i])
 	}
 
 }

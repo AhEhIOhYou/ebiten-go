@@ -4,8 +4,8 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/fields"
 	"github.com/AhEhIOhYou/project2/prj2/internal/objectpool"
 	"github.com/AhEhIOhYou/project2/prj2/internal/sprite"
-	"github.com/AhEhIOhYou/project2/prj2/internal/tools"
 	"github.com/AhEhIOhYou/project2/prj2/internal/utils"
+	"github.com/AhEhIOhYou/project2/prj2/internal/weapon"
 	"math"
 )
 
@@ -21,7 +21,7 @@ type Actor struct {
 	spr           *sprite.Sprite
 	sprIndex      int
 	life          int
-	mainWeapon    tools.Weapon
+	mainWeapon    weapon.Weapon
 	movdweTo      struct{ x, y float64 }
 	bulletPool    *objectpool.Pool
 }
@@ -85,7 +85,7 @@ func (a *Actor) SetSpeed(speed float64, degree int) {
 }
 
 // SetMainWeapon устанавливает пушку
-func (a *Actor) SetMainWeapon(mainWeapon tools.Weapon) {
+func (a *Actor) SetMainWeapon(mainWeapon weapon.Weapon) {
 	a.mainWeapon = mainWeapon
 }
 
@@ -95,8 +95,8 @@ func (a *Actor) SetPosition(x, y float64) {
 	a.y = y
 }
 
-func (a *Actor) FireWeapon(degree int, speed float64, angles []int) {
-	a.mainWeapon.Fire(a.x, a.y, speed, degree, angles)
+func (a *Actor) FireWeapon(degree int, speed float64, angles []int, pos [][]float64) {
+	a.mainWeapon.Fire(a.x, a.y, speed, degree, angles, pos)
 }
 
 // SetField возвращает поле игрока
@@ -142,4 +142,12 @@ func (a *Actor) GetAdjustAngles() []int {
 
 func (a *Actor) SetAdjustAngles(angles []int) {
 	a.mainWeapon.SetAdjustAngles(angles)
+}
+
+func (a *Actor) GetAdjustPos() [][]float64 {
+	return a.mainWeapon.GetAdjustPos()
+}
+
+func (a *Actor) SetAdjustPos(pos [][]float64) {
+	a.mainWeapon.SetAdjustPos(pos)
 }
