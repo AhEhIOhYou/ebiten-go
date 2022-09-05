@@ -1,10 +1,34 @@
 package bullet
 
-import "github.com/AhEhIOhYou/project2/prj2/internal/shared"
+import (
+	"github.com/AhEhIOhYou/project2/prj2/internal/shared"
+	"github.com/AhEhIOhYou/project2/prj2/internal/sprite"
+)
+
+// playerNormalController контроллер для инициализации пуль игрока
+type playerNormalController struct {
+	baseController
+}
+
+func (c *playerNormalController) init(b *Bullet) {
+	b.spr = sprite.PlayerBullet
+	b.setSize(4, 4)
+	b.setSpeed(30, b.degree)
+}
+
+type enemyWeaponController struct {
+	baseController
+}
+
+func (c *enemyWeaponController) init(b *Bullet) {
+	b.spr = sprite.EnemyBullet
+	b.setSize(8, 8)
+	b.setSpeed(b.speed, b.degree)
+}
 
 var (
 	playerNormal = &playerNormalController{baseController{}}
-	enemyWeapon1 = &enemyWeapon1Controller{baseController{}}
+	enemyWeapon1 = &enemyWeaponController{baseController{}}
 )
 
 // NormalPlayerShot Создает выстрел

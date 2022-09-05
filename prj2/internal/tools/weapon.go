@@ -27,6 +27,41 @@ type baseWeapon struct {
 	adjustBulletAngles []int
 }
 
+// Normal представляет оружие игрока
+type Normal struct{ baseWeapon }
+
+func NewNormal(factory shotFactoryFunction) *Normal {
+	w := &Normal{baseWeapon{}}
+	w.shotFactory = factory
+
+	return w
+}
+
+// Fire создает выстрелы
+func (w *Normal) Fire(x, y, speed float64, degree int, angles []int) {
+	if time.Since(w.lastShotTime).Milliseconds() < w.cooldown {
+		return
+	}
+	w.lastShotTime = time.Now()
+	w.shotFactory(x, y, speed, degree, angles)
+}
+
+type wp struct{ baseWeapon }
+
+func NewEnemyWeapon1(factory shotFactoryFunction) *wp {
+	w := &wp{baseWeapon{}}
+	w.shotFactory = factory
+	return w
+}
+
+func (w *wp) Fire(x, y, speed float64, degree int, angles []int) {
+	if time.Since(w.lastShotTime).Milliseconds() < w.cooldown {
+		return
+	}
+	w.lastShotTime = time.Now()
+	w.shotFactory(x, y, speed, degree, angles)
+}
+
 func (w *baseWeapon) SetBulletSpeed(speed float64) {
 	w.bulletSpeed = speed
 }
