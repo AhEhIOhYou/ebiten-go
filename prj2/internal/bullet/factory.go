@@ -30,24 +30,16 @@ var (
 )
 
 // PlayerWeaponShot Создает выстрел
-func PlayerWeaponShot(x, y, speed float64, degree int, angles []int, pos [][]float64) {
-	b1 := (*Bullet)(shared.PlayerBullets.CreateFromPool())
-	if b1 == nil {
-		return
-	}
-	b1.init(playerNormal, x, y, speed, degree)
+func PlayerWeaponShot(x, y, speed float64, weaponDegree int, angles []int, pos [][]float64) {
 
-	b2 := (*Bullet)(shared.PlayerBullets.CreateFromPool())
-	if b2 == nil {
-		return
+	for i := 0; i < len(angles); i++ {
+		b := (*Bullet)(shared.PlayerBullets.CreateFromPool())
+		if b == nil {
+			return
+		}
+		b.init(playerNormal, x+pos[i][0], y+pos[i][1], speed, weaponDegree+angles[i])
 	}
-	b2.init(playerNormal, x+5, y-10, speed, degree+5)
 
-	b3 := (*Bullet)(shared.PlayerBullets.CreateFromPool())
-	if b3 == nil {
-		return
-	}
-	b3.init(playerNormal, x-5, y-10, speed, degree-5)
 }
 
 func EnemyWeaponShot(x, y, speed float64, weaponDegree int, angles []int, pos [][]float64) {

@@ -112,7 +112,7 @@ func (stg *Scene) Update() {
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
-		stg.player.FireWeapon(stg.player.GetDegree(), 10, []int{0, 2}, [][]float64{{0, 0}})
+		stg.player.FireWeapon(270, 10, []int{-5, -1, 1, 5}, [][]float64{{-10, 0}, {-5, 0}, {5, 0}, {10, 0}})
 	}
 
 	for ite := shared.EnemyBullets.GetIterator(); ite.HasNext(); {
