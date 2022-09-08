@@ -142,53 +142,14 @@ func (stg *Scene) LoadEvents() {
 
 	stg.eventManager.AddEvent(new(eventmanager.Event).
 		OnTime(1).
-		Actor(stg.enemy).
-		Fire(true).
-		Weapon(0, 20, -2, 0.7).
-		ShotAngles([]int{0}).
-		ShotPos([][]float64{{0, 0}}).
-		Duration(20).
-		UpdateStatus("new"))
-
-	stg.eventManager.AddEvent(new(eventmanager.Event).
-		OnTime(4).
 		Actor(stg.enemy2).
 		Fire(true).
-		Weapon(0, 13, 21, 2).
-		ShotAngles([]int{-10, 0, 10}).
-		ShotPos([][]float64{{50, 50}, {0, 0}, {-50, 50}}).
-		Duration(2).
+		Weapon(90, 100, 0, 3).
+		AddShot([]int{-6, -3, 0, 3, 6}, [][]float64{{0, -6}, {0, 4}, {0, 6}, {0, 4}, {0, -6}}).
+		AddShot([]int{-3, 0, 3}, [][]float64{{0, 0}, {0, 0}, {0, 0}}).
+		Duration(10).
 		UpdateStatus("new"))
 
-	stg.eventManager.AddEvent(new(eventmanager.Event).
-		OnTime(8).
-		Actor(stg.enemy2).
-		Fire(true).
-		Weapon(0, 13, -21, 2).
-		ShotAngles([]int{-10, 0, 10}).
-		ShotPos([][]float64{{0, 0}, {0, 0}, {0, 0}}).
-		Duration(2).
-		UpdateStatus("new"))
-
-	stg.eventManager.AddEvent(new(eventmanager.Event).
-		OnTime(12).
-		Actor(stg.enemy2).
-		Fire(true).
-		Weapon(0, 13, 21, 2).
-		ShotAngles([]int{-10, 0, 10}).
-		ShotPos([][]float64{{0, 0}, {0, 0}, {0, 0}}).
-		Duration(2).
-		UpdateStatus("new"))
-
-	stg.eventManager.AddEvent(new(eventmanager.Event).
-		OnTime(16).
-		Actor(stg.enemy2).
-		Fire(true).
-		Weapon(0, 13, -21, 2).
-		ShotAngles([]int{-10, 0, 10}).
-		ShotPos([][]float64{{0, 0}, {0, 0}, {0, 0}}).
-		Duration(2).
-		UpdateStatus("new"))
 }
 
 // Draw отрисовывает всех действиующих лиц сцены

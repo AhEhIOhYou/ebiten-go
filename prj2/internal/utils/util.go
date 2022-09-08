@@ -18,6 +18,13 @@ func DegToRad(degree int) float64 {
 	return float64(degree) * math.Pi / 180
 }
 
+func GetDegree(x1, y1, x2, y2 float64) float64 {
+
+	a := math.Atan2(x1-x2, y1-y2)
+
+	return a
+}
+
 // Entity represents an entity
 type Entity interface {
 	GetX() float64

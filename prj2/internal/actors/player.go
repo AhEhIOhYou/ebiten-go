@@ -14,7 +14,7 @@ const (
 	initPlayerSpeed  = 6
 	focusPlayerSpeed = 1.5
 	playerDegree     = 270
-	playerPosX       = 320
+	playerPosX       = 50
 	playerPosY       = 320
 	playerWidth      = 10
 	playerHeight     = 10

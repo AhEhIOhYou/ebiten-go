@@ -36,6 +36,7 @@ func (em *EventManager) execute(event *Event) {
 		case "new":
 			event.enemy.SetWeaponDegree(event.ws.degree)
 			event.UpdateStatus("progress")
+			event.patternIndex = 0
 			fallthrough
 		case "progress":
 			if event.moveX != 0 || event.moveY != 0 {
@@ -43,13 +44,17 @@ func (em *EventManager) execute(event *Event) {
 			}
 			if event.isFire {
 				event.SetupWeapon()
-				event.SetupShot()
+				event.SetupShot2(event.patternIndex)
 				event.enemy.FireWeapon(
 					event.enemy.GetWeaponDegree(),
 					event.enemy.GetBulletSpeed(),
 					event.enemy.GetAdjustAngles(),
 					event.enemy.GetAdjustPos(),
 				)
+				event.patternIndex++
+				if event.patternIndex >= len(event.pattern) {
+					event.patternIndex = 0
+				}
 			}
 			return
 		}

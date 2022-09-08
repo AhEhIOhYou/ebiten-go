@@ -16,6 +16,8 @@ type Event struct {
 	enemy        *actors.Enemy
 	ws           WeaponSetup
 	ss           ShotSetup
+	pattern      []ShotSetup
+	patternIndex int
 	status       string
 }
 
@@ -127,5 +129,19 @@ func (ev *Event) OnTime(seconds float64) (event *Event) {
 
 func (ev *Event) UpdateStatus(status string) (event *Event) {
 	ev.status = status
+	return ev
+}
+
+func (ev *Event) SetupShot2(index int) {
+	ev.enemy.SetAdjustAngles(ev.pattern[index].angles)
+	ev.enemy.SetAdjustPos(ev.pattern[index].pos)
+}
+
+func (ev *Event) AddShot(angles []int, pos [][]float64) (event *Event) {
+	tmp := ShotSetup{
+		angles: angles,
+		pos:    pos,
+	}
+	ev.pattern = append(ev.pattern, tmp)
 	return ev
 }
