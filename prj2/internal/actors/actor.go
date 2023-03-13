@@ -151,3 +151,11 @@ func (a *Actor) GetAdjustPos() [][]float64 {
 func (a *Actor) SetAdjustPos(pos [][]float64) {
 	a.mainWeapon.SetAdjustPos(pos)
 }
+
+func (a *Actor) SetLifePoints(points int) {
+	a.life = points
+}
+
+func (a *Actor) GetLifePoints() int {
+	return a.life
+}

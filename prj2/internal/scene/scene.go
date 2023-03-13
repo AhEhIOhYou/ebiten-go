@@ -1,6 +1,11 @@
 package scene
 
 import (
+	"image/color"
+	"log"
+	"time"
+	"unsafe"
+
 	"github.com/AhEhIOhYou/project2/prj2/internal/actors"
 	"github.com/AhEhIOhYou/project2/prj2/internal/bullet"
 	"github.com/AhEhIOhYou/project2/prj2/internal/eventmanager"
@@ -11,16 +16,14 @@ import (
 	"github.com/AhEhIOhYou/project2/prj2/internal/utils"
 	"github.com/AhEhIOhYou/project2/prj2/internal/weapon"
 	"github.com/hajimehoshi/ebiten/v2"
-	"image/color"
-	"time"
-	"unsafe"
 )
 
 type gameState int
 
 const (
 	maxPlayerShot              = 500
-	maxEnemyShot               = 5000
+	maxEnemyShot               = 100000
+	damagePerHit               = 10
 	gameStateLoading gameState = iota
 	gameStatePlaying
 )
@@ -106,9 +109,9 @@ func (stg *Scene) Update() {
 	stg.eventManager.Execute()
 
 	input.Update()
-	//if input.Reload {
-	//	stg.setupGame()
-	//}
+	if input.Reload {
+		stg.setupGame()
+	}
 
 	stg.player.Action(input.Horizontal, input.Vertical, input.Fire, input.Focus)
 	if input.Fire {
@@ -179,6 +182,12 @@ func (stg *Scene) checkCollision() {
 		e := (*bullet.Bullet)(ite.Next().GetData())
 		if utils.IsCollideWith(stg.player, e) == true {
 			e.OnHit()
+			log.Println("HIT")
+			lifePoints := stg.player.GetLifePoints()
+			if lifePoints == 10 {
+				log.Println("ПОМЕР")
+			}
+			stg.player.SetLifePoints(lifePoints - damagePerHit)
 		}
 	}
 }
